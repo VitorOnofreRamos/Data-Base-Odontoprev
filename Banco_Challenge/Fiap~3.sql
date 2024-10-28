@@ -11,65 +11,27 @@ Funções criadas
 
 set SERVEROUT on;
 
-/*
-CREATE OR REPLACE FUNCTION validar_CPF(p_CPF IN VARCHAR2) RETURN BOOLEAN IS
-BEGIN
-    IF LENGTH(p_CPF) <> 14 OR REGEXP_LIKE(p_CPF, '[^0-9.-]') THEN
-        DBMS_OUTPUT.PUT_LINE('CPF inválido! CPF deve ter 14 caracteres (incluindo pontos e hífen).');
-        RETURN FALSE;
-    END IF;
-    
-    -- Verifica se o CPF já existe na tabela Paciente
-    FOR rec IN (SELECT 1 FROM Paciente WHERE CPF = p_CPF) LOOP
-        DBMS_OUTPUT.PUT_LINE('CPF consta na tabela!');
-        RETURN FALSE;
-    END LOOP;
-    
-    DBMS_OUTPUT.PUT_LINE('CPF válido.');
-    RETURN TRUE;
-END validar_CPF;
-/
-
---
-
-CREATE OR REPLACE FUNCTION validar_DataNascimento(p_Data IN DATE) RETURN BOOLEAN IS
-BEGIN
-    IF p_Data > SYSDATE THEN
-        DBMS_OUTPUT.PUT_LINE('A Data de Nascimento inválida! A Data de Nascimento não pode estar no futuro.');
-        RETURN FALSE;
-    END IF;
-    
-    DBMS_OUTPUT.PUT_LINE('A Data de Nascimento válida');
-    RETURN TRUE;
-END validar_DataNascimento;
-/
-*/
-
 -- Validação de Tabelas
 
--- Função para Validar CPF e Data de Nascimento do Paciente
+-- Funções para Validar CPF e Data de Nascimento do Paciente
 CREATE OR REPLACE FUNCTION Valida_Paciente(
-    p_CPF Paciente.CPF%Type,
-    p_Data_Nascimento Paciente.Data_Nascimento%Type,
-    p_Carteirinha Paciente.Carteirinha%Type
+    p_ID_Paciente Paciente.ID_Paciente%TYPE DEFAULT NULL,
+    p_CPF Paciente.CPF%TYPE,
+    p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
+    p_Carteirinha Paciente.Carteirinha%TYPE
 ) RETURN BOOLEAN IS
     v_count NUMBER;
 BEGIN
-    -- Validação do CPF (simplificada)
+    -- Validação de formato do CPF
     IF LENGTH(p_CPF) != 14 OR REGEXP_LIKE(p_CPF, '[^0-9.-]') THEN
         DBMS_OUTPUT.PUT_LINE('CPF inválido! CPF deve ter 14 caracteres (incluindo pontos e hífen).');
         RETURN FALSE;
     END IF;
     
-    -- Verifica se o CPF já existe na tabela Paciente
-    /*FOR rec IN (SELECT 1 FROM Paciente WHERE CPF = p_CPF) LOOP
-        DBMS_OUTPUT.PUT_LINE('CPF já consta na tabela!');
-        RETURN FALSE;
-    END LOOP;*/
-    
+    -- Verificar se o CPF é único (ignorando o próprio paciente, se p_ID_Paciente for fornecido)
     SELECT COUNT(*) INTO v_count
     FROM Paciente
-    WHERE CPF = p_CPF;
+    WHERE CPF = p_CPF AND (p_ID_Paciente IS NULL OR ID_Paciente != p_ID_Paciente);
     IF v_count > 0 THEN
         DBMS_OUTPUT.PUT_LINE('CPF já consta na tabela!');
         RETURN FALSE; 
@@ -77,24 +39,26 @@ BEGIN
 
     -- Verificar se a data de nascimento não é futura
     IF p_Data_Nascimento > SYSDATE THEN
-        DBMS_OUTPUT.PUT_LINE('A Data de Nascimento inválida! A Data de Nascimento não pode estar no futuro.');
+        DBMS_OUTPUT.PUT_LINE('Data de Nascimento inválida! A data não pode estar no futuro.');
         RETURN FALSE;
     END IF;
     
+    -- Validação da carteirinha (tamanho de 5 caracteres)
     IF LENGTH(p_Carteirinha) != 5 THEN
-        DBMS_OUTPUT.PUT_LINE('Carterinha inválida! Carterinha deve ser uma sequência de 5 números.');
+        DBMS_OUTPUT.PUT_LINE('Carteirinha inválida! Deve ter 5 caracteres.');
         RETURN FALSE;
     END IF;
     
+    -- Verificar se a carteirinha é única (ignorando o próprio paciente, se p_ID_Paciente for fornecido)
     SELECT COUNT(*) INTO v_count
     FROM Paciente
-    WHERE Carteirinha = p_Carteirinha;
+    WHERE Carteirinha = p_Carteirinha AND (p_ID_Paciente IS NULL OR ID_Paciente != p_ID_Paciente);
     IF v_count > 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Carterinha já consta na tabela!');
+        DBMS_OUTPUT.PUT_LINE('Carteirinha já consta na tabela!');
         RETURN FALSE; 
     END IF;
 
-    DBMS_OUTPUT.PUT_LINE('Paciente Válido.');
+    DBMS_OUTPUT.PUT_LINE('Paciente válido.');
     RETURN TRUE;
 END Valida_Paciente;
 /
@@ -118,6 +82,8 @@ BEGIN
     RETURN TRUE;
 END Valida_Dentista;
 /
+
+
 
 -- Função pára validar Data da Consulta e Status da Consulta
 CREATE OR REPLACE FUNCTION Valida_Consulta(

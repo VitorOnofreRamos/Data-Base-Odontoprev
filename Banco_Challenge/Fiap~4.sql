@@ -3,7 +3,7 @@
 -- Paciente
 set SERVEROUT ON;
 
-CREATE OR REPLACE PROCEDURE CREATE_Paciente(
+CREATE OR REPLACE PROCEDURE Insert_Paciente(
     p_Nome Paciente.Nome%TYPE,
     p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
     p_CPF Paciente.CPF%TYPE,
@@ -13,7 +13,7 @@ CREATE OR REPLACE PROCEDURE CREATE_Paciente(
 ) IS
 BEGIN
     -- Validar CPF e Data de Nascimento
-    IF Valida_Paciente(p_CPF, p_Data_Nascimento, p_Carteirinha) THEN
+    IF Valida_Paciente(NULL, p_CPF, p_Data_Nascimento, p_Carteirinha) THEN
         INSERT INTO Paciente (ID_Paciente, Nome, Data_Nascimento, CPF, Endereco, Telefone, Carteirinha)
         VALUES (seq_paciente.NEXTVAL, p_Nome, p_Data_Nascimento, p_CPF, p_Endereco, p_Telefone, p_Carteirinha);
         COMMIT;
@@ -25,10 +25,10 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro ao inserir paciente: ' || SQLERRM);
         ROLLBACK;
-END CREATE_Paciente;
+END Insert_Paciente;
 /
 
-EXECUTE CREATE_PACIENTE('Paulin Bacana', DATE '2000-05-20', '198.999.779-01', 'Rua A, 123', '(11) 98888-7777', 55855);
+-- EXECUTE Insert_PACIENTE('Paulin Bacana', DATE '2000-05-20', '198.999.779-01', 'Rua A, 123', '(11) 98888-7777', 55855);
 
 --
 
@@ -63,7 +63,7 @@ EXCEPTION
 END Select_Paciente;
 /
 
-EXECUTE SELECT_PACIENTE(3);
+-- EXECUTE SELECT_PACIENTE(6);
 
 --
 
@@ -88,7 +88,47 @@ EXCEPTION
 END Delete_Paciente;
 /
 
-EXECUTE DELETE_PACIENTE(7);
+-- EXECUTE DELETE_PACIENTE(6);
 
 --
 
+CREATE OR REPLACE PROCEDURE Update_Paciente(
+    p_ID_Paciente IN Paciente.ID_Paciente%TYPE,
+    p_Nome IN Paciente.Nome%TYPE DEFAULT NULL,
+    p_Data_Nascimento IN Paciente.Data_Nascimento%TYPE DEFAULT NULL,
+    p_CPF IN Paciente.CPF%TYPE DEFAULT NULL,
+    p_Endereco IN Paciente.Endereco%TYPE DEFAULT NULL,
+    p_Telefone IN Paciente.Telefone%TYPE DEFAULT NULL,
+    p_Carteirinha IN Paciente.Carteirinha%TYPE DEFAULT NULL
+) IS
+BEGIN
+    -- Validar CPF, Data de Nascimento e Carteirinha
+    IF Valida_Paciente(p_ID_Paciente, p_CPF, p_Data_Nascimento, p_Carteirinha) THEN
+        -- Dados válidos, executar o UPDATE
+        UPDATE Paciente
+        SET Nome = COALESCE(p_Nome, Nome),
+            Data_Nascimento = COALESCE(p_Data_Nascimento, Data_Nascimento),
+            CPF = COALESCE(p_CPF, CPF),
+            Endereco = COALESCE(p_Endereco, Endereco),
+            Telefone = COALESCE(p_Telefone, Telefone),
+            Carteirinha = COALESCE(p_Carteirinha, Carteirinha)
+        WHERE ID_Paciente = p_ID_Paciente;
+
+        -- Verificar se alguma linha foi atualizada
+        IF SQL%ROWCOUNT > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Paciente atualizado com sucesso.');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Nenhum paciente encontrado com o ID fornecido.');
+        END IF;
+    ELSE
+        -- Dados inválidos, mostrar mensagem de erro
+        DBMS_OUTPUT.PUT_LINE('Erro: Dados do paciente inválidos. Verifique as regras de integridade.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar o paciente: ' || SQLERRM);
+        ROLLBACK;
+END Update_Paciente;
+/
+
+-- EXECUTE Update_Paciente(6, NULL, DATE '1999-05-20');
