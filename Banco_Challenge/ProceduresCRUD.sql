@@ -1,4 +1,5 @@
 -- Operações CRUD
+
 set SERVEROUT ON;
 
 -- Paciente
@@ -92,7 +93,62 @@ END Delete_Paciente;
 
 -- EXECUTE DELETE_PACIENTE(7);
 
-------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 -- Dentista
+CREATE OR REPLACE PROCEDURE Insert_Dentista(
+    p_Nome Dentista.Nome%TYPE,
+    p_CRO Dentista.CRO%TYPE,
+    p_Especialidade Dentista.Especialidade%TYPE,
+    p_Telefone Dentista.Telefone%TYPE
+) IS
+BEGIN
+    -- Validação dos dados do Dentista
+    IF Valida_Dentista_Insert(p_Nome, p_CRO, p_Especialidade, p_Telefone) THEN
+        INSERT INTO Dentista (ID_Dentista, Nome, CRO, Especialidade, Telefone)
+        VALUES (seq_dentista.NEXTVAL, p_Nome, p_CRO, p_Especialidade, p_Telefone);
+        
+        DBMS_OUTPUT.PUT_LINE('Dentista inserido com sucesso.');
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para inserção de Dentista.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir dentista: ' || SQLERRM);
+        ROLLBACK;
+END Insert_Dentista;
+/
 
+-- EXECUTE Insert_Dentista(123, 'CRO-12222', 'LEYBRON JAMES', '(11) 1551-1111');
+
+-- Procedure para Atualizar Dentista
+CREATE OR REPLACE PROCEDURE Update_Dentista(
+    p_ID_Dentista Dentista.ID_Dentista%TYPE,
+    p_Nome Dentista.Nome%TYPE DEFAULT NULL,
+    p_CRO Dentista.CRO%TYPE DEFAULT NULL,
+    p_Especialidade Dentista.Especialidade%TYPE DEFAULT NULL,
+    p_Telefone Dentista.Telefone%TYPE DEFAULT NULL
+) IS
+BEGIN
+    -- Validação dos dados do Dentista
+    IF Valida_Dentista_Update(p_ID_Dentista, p_Nome, p_CRO, p_Especialidade, p_Telefone) THEN
+        UPDATE Dentista
+        SET Nome = COALESCE(p_Nome, Nome),
+            CRO = COALESCE(p_CRO, CRO),
+            Especialidade = COALESCE(p_Especialidade, Especialidade),
+            Telefone = COALESCE(p_Telefone, Telefone)
+        WHERE ID_Dentista = p_ID_Dentista;
+        DBMS_OUTPUT.PUT_LINE('Paciente atualizado com sucesso.');
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para atualização de Dentista.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar dentista: ' || SQLERRM);
+        ROLLBACK;
+END Update_Dentista;
+/
+
+EXECUTE Update_Dentista(7, 'Paulin Jr.');

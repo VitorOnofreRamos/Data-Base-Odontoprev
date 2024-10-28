@@ -165,7 +165,7 @@ END Valida_Paciente_Update;
 --------------------------------------------------------------------------------
 
 -- Função para Validar do Dentista 
--- Função para validar todos os dados do paciente durante a inserção
+-- Função para validar todos os dados do dentista durante a inserção
 CREATE OR REPLACE FUNCTION Valida_Dentista_Insert(
     p_Nome Dentista.Nome%TYPE,
     p_CRO Dentista.CRO%TYPE,
@@ -219,12 +219,12 @@ END Valida_Dentista_Insert;
 /
 
 -- Função para validar todos os dados do paciente durante a atualização
-CREATE OR REPLACE FUNCTION Valida_Dados_Dentista_Update(
+CREATE OR REPLACE FUNCTION Valida_Dentista_Update(
     p_ID_Dentista Dentista.ID_Dentista%TYPE,
-    p_Nome Dentista.Nome%TYPE,
-    p_CRO Dentista.CRO%TYPE,
-    p_Especialidade Dentista.Especialidade%TYPE,
-    p_Telefone Dentista.Telefone%TYPE
+    p_Nome Dentista.Nome%TYPE DEFAULT NULL,
+    p_CRO Dentista.CRO%TYPE DEFAULT NULL,
+    p_Especialidade Dentista.Especialidade%TYPE DEFAULT NULL,
+    p_Telefone Dentista.Telefone%TYPE DEFAULT NULL
 ) RETURN BOOLEAN IS
     v_count NUMBER;
 BEGIN
@@ -245,7 +245,7 @@ BEGIN
         IF TRIM(p_CRO) = '' THEN
             DBMS_OUTPUT.PUT_LINE('Erro: CRO não pode ser vazio.');
             RETURN FALSE;
-        ELSIF LENGTH(p_CRO) < 5 THEN
+        ELSIF NOT REGEXP_LIKE(p_CRO, '^CRO-[0-9]{5}$') THEN
             DBMS_OUTPUT.PUT_LINE('Erro: CRO deve ter pelo menos 5 caracteres.');
             RETURN FALSE;
         END IF;
@@ -279,7 +279,7 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE('Dentista válido para atualização.');
     RETURN TRUE;
-END Valida_Dados_Dentista_Update;
+END Valida_Dentista_Update;
 /
 
 --------------------------------------------------------------------------------
