@@ -8,7 +8,6 @@ DROP SEQUENCE seq_dentista;
 DROP SEQUENCE seq_consulta;
 DROP SEQUENCE seq_historico;
 
-
 CREATE TABLE Paciente (
     ID_Paciente NUMBER(12) PRIMARY KEY,
     Nome VARCHAR2(30) NOT NULL,
