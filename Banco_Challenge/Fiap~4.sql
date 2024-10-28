@@ -28,43 +28,67 @@ EXCEPTION
 END CREATE_Paciente;
 /
 
-EXECUTE CREATE_PACIENTE('Paulin Bacana', DATE '1990-05-20', '198.999.999-01', 'Rua A, 123', '(11) 98888-7777', 55555);
+EXECUTE CREATE_PACIENTE('Paulin Bacana', DATE '2000-05-20', '198.999.779-01', 'Rua A, 123', '(11) 98888-7777', 55855);
 
+--
 
-CREATE OR REPLACE PROCEDURE Update_Paciente(
-    p_ID_Paciente Paciente ,
-    p_Nome Paciente.Nome%TYPE,
-    p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
-    p_CPF Paciente.CPF%TYPE,
-    p_Endereco Paciente.Endereco%TYPE,
-    p_Telefone Paciente.Telefone%TYPE,
-    p_Carteirinha Paciente.Carteirinha%TYPE
+CREATE OR REPLACE PROCEDURE Select_Paciente(
+    p_ID_Paciente Paciente.ID_Paciente%Type
+) IS
+    v_Nome Paciente.Nome%TYPE;
+    v_Data_Nascimento Paciente.Data_Nascimento%TYPE;
+    v_CPF Paciente.CPF%TYPE;
+    v_Endereco Paciente.Endereco%TYPE;
+    v_Telefone Paciente.Telefone%TYPE;
+    v_Carteirinha Paciente.Carteirinha%TYPE;
+BEGIN
+    -- Selecionar o paciente pelo ID
+    SELECT Nome, Data_Nascimento, CPF, Endereco, Telefone, Carteirinha
+    INTO v_Nome, v_Data_Nascimento, v_CPF, v_Endereco, v_Telefone, v_Carteirinha
+    FROM Paciente
+    WHERE ID_Paciente = p_ID_Paciente;
+
+    -- Exibir os dados do paciente
+    DBMS_OUTPUT.PUT_LINE('Nome: ' || v_Nome);
+    DBMS_OUTPUT.PUT_LINE('Data de Nascimento: ' || TO_CHAR(v_Data_Nascimento, 'DD/MM/YYYY'));
+    DBMS_OUTPUT.PUT_LINE('CPF: ' || v_CPF);
+    DBMS_OUTPUT.PUT_LINE('Endereço: ' || v_Endereco);
+    DBMS_OUTPUT.PUT_LINE('Telefone: ' || v_Telefone);
+    DBMS_OUTPUT.PUT_LINE('Carteirinha: ' || v_Carteirinha);
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Paciente não encontrado com o ID fornecido.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao selecionar o paciente: ' || SQLERRM);
+END Select_Paciente;
+/
+
+EXECUTE SELECT_PACIENTE(3);
+
+--
+
+CREATE OR REPLACE PROCEDURE Delete_Paciente(
+    p_ID_Paciente Paciente.ID_Paciente%TYPE
 ) IS
 BEGIN
-    -- Verificar a validade dos dados usando a função de validação
-    IF Valida_Paciente(p_Nome, p_Data_Nascimento, p_CPF, p_Endereco, p_Telefone, p_Carteirinha) THEN
-        -- Dados válidos, executar o UPDATE
-        UPDATE Paciente
-        SET Nome = p_Nome,
-            Data_Nascimento = p_Data_Nascimento,
-            CPF = p_CPF,
-            Endereco = p_Endereco,
-            Telefone = p_Telefone,
-            Carteirinha = p_Carteirinha
-        WHERE ID_Paciente = p_ID_Paciente;
+    -- Deletar o paciente pelo ID
+    DELETE FROM Paciente
+    WHERE ID_Paciente = p_ID_Paciente;
 
-        -- Verificar se alguma linha foi atualizada
-        IF SQL%ROWCOUNT > 0 THEN
-            DBMS_OUTPUT.PUT_LINE('Paciente atualizado com sucesso.');
-        ELSE
-            DBMS_OUTPUT.PUT_LINE('Nenhum paciente encontrado com o ID fornecido.');
-        END IF;
+    -- Verificar se alguma linha foi deletada
+    IF SQL%ROWCOUNT > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Paciente deletado com sucesso.');
     ELSE
-        -- Dados inválidos, mostrar mensagem de erro
-        DBMS_OUTPUT.PUT_LINE('Erro: Dados do paciente inválidos. Verifique as regras de integridade.');
+        DBMS_OUTPUT.PUT_LINE('Nenhum paciente encontrado com o ID fornecido.');
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar o paciente: ' || SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('Erro ao deletar o paciente: ' || SQLERRM);
         ROLLBACK;
-END Update_Paciente;
+END Delete_Paciente;
+/
+
+EXECUTE DELETE_PACIENTE(7);
+
+--
+

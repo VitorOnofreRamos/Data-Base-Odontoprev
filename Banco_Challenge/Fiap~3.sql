@@ -1,4 +1,4 @@
-s/* Funções de Validação de Entrada de Dados
+/* Funções de Validação de Entrada de Dados
 Desenvolver duas funções para validar a entrada de dados, assegurando que as
 informações inseridas estejam em conformidade com as regras de integridade e os
 requisitos específicos do projeto.
@@ -98,14 +98,6 @@ BEGIN
     RETURN TRUE;
 END Valida_Paciente;
 /
-
-Declare
-    c Boolean := Valida_Paciente('123.466.789-01', DATE '2024-05-20', 55555);
-Begin
-    if c then
-        DBMS_OUTPUT.PUT_LINE('A');
-    END IF;
-end;
 
 -- Função para Validar CRO e Especialidade do Dentista 
 CREATE OR REPLACE FUNCTION Valida_Dentista(
