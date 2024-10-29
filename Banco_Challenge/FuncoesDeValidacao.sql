@@ -59,7 +59,10 @@ BEGIN
     END IF;
 
     -- Validação da Data de Nascimento
-    IF p_Data_Nascimento > SYSDATE THEN
+    IF p_Data_Nascimento IS NULL OR TRIM(p_Data_Nascimento) = '' THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Data de nascimento é obrigatória.');
+        RETURN FALSE;
+    ELSIF p_Data_Nascimento > SYSDATE THEN
         DBMS_OUTPUT.PUT_LINE('Erro: Data de Nascimento não pode ser futura.');
         RETURN FALSE;
     END IF;
@@ -96,6 +99,14 @@ CREATE OR REPLACE FUNCTION Valida_Paciente_Update(
 ) RETURN BOOLEAN IS
     v_count NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_count
+        FROM Paciente
+        WHERE ID_Paciente = p_ID_Paciente;
+        IF v_count < 1 THEN
+            DBMS_OUTPUT.PUT_LINE('Erro: Paciente não consta na tabela!');
+            RETURN FALSE; 
+        END IF;
+        
     -- Validação do Nome (se fornecido)
     IF p_Nome IS NOT NULL AND TRIM(p_Nome) = '' THEN
         DBMS_OUTPUT.PUT_LINE('Erro: Nome não pode ser vazio.');
@@ -164,7 +175,7 @@ END Valida_Paciente_Update;
 
 --------------------------------------------------------------------------------
 
--- Função para Validar do Dentista 
+-- Funções para Validar do Dentista 
 -- Função para validar todos os dados do dentista durante a inserção
 CREATE OR REPLACE FUNCTION Valida_Dentista_Insert(
     p_Nome Dentista.Nome%TYPE,
@@ -228,6 +239,14 @@ CREATE OR REPLACE FUNCTION Valida_Dentista_Update(
 ) RETURN BOOLEAN IS
     v_count NUMBER;
 BEGIN
+    SELECT COUNT(*) INTO v_count
+        FROM Dentista
+        WHERE ID_Dentista = p_ID_Dentista;
+        IF v_count < 1 THEN
+            DBMS_OUTPUT.PUT_LINE('Erro: Dentista não consta na tabela!');
+            RETURN FALSE; 
+        END IF;
+
     -- Validação do ID_Dentista
     IF p_ID_Dentista IS NULL THEN
         DBMS_OUTPUT.PUT_LINE('Erro: ID do dentista é obrigatório para atualização.');
@@ -283,26 +302,113 @@ END Valida_Dentista_Update;
 /
 
 --------------------------------------------------------------------------------
--- Função pára validar Data da Consulta e Status da Consulta
-CREATE OR REPLACE FUNCTION Valida_Consulta(
-    p_Data_Consulta Consulta.DATA_CONSULTA%Type,
-    p_Status Consulta.Status%Type
+
+-- Funções para validar Data da Consulta
+-- Função para validar dados de inserção na tabela Consulta
+CREATE OR REPLACE FUNCTION Valida_Consulta_Insert (
+    p_Data_Consulta Consulta.Data_Consulta%TYPE,
+    p_ID_Paciente Consulta.ID_Paciente%TYPE,
+    p_ID_Dentista Consulta.ID_Dentista%TYPE,
+    p_Status Consulta.Status%TYPE
 ) RETURN BOOLEAN IS
+    v_count NUMBER;
 BEGIN
-    -- Verificar se a data da consulta é válida (pode ser presente ou futura)
-    IF p_Data_Consulta < (SYSDATE - INTERVAL '1' DAY) THEN
+    -- Verificar se o Paciente existe
+    SELECT COUNT(*) INTO v_count
+    FROM Paciente
+    WHERE ID_Paciente = p_ID_Paciente;
+
+    IF v_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Paciente não encontrado.');
         RETURN FALSE;
     END IF;
 
-    -- Verificar se o status é válido (deve ser 'Agendada', 'Concluída' ou 'Cancelada')
-    IF NOT (p_Status IN ('AGENDADA', 'CONCLUÍDA', 'CANCELADA')) THEN
+    -- Verificar se o Dentista existe
+    SELECT COUNT(*) INTO v_count
+    FROM Dentista
+    WHERE ID_Dentista = p_ID_Dentista;
+
+    IF v_count = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Dentista não encontrado.');
+        RETURN FALSE;
+    END IF;
+
+    -- Verificar se a Data_Consulta não é nula
+    IF p_Data_Consulta IS NULL OR TRIM(p_Data_Consulta) = '' THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta não pode ser nula.');
+        RETURN FALSE;
+    END IF;
+
+    -- Verificar se o Status é válido (valores permitidos: 'AGENDADA', 'CONCLUIDA', 'CANCELADA')
+    IF p_Status NOT IN ('AGENDADA', 'CONCLUIDA', 'CANCELADA') THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Status inválido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
         RETURN FALSE;
     END IF;
 
     RETURN TRUE;
-END Valida_Consulta;
+END Valida_Consulta_Insert;
 /
 
+-- Função para validar dados de atualização na tabela Consulta
+CREATE OR REPLACE FUNCTION Valida_Consulta_Update (
+    p_ID_Consulta Consulta.ID_Consulta%TYPE,
+    p_Data_Consulta Consulta.Data_Consulta%TYPE DEFAULT NULL,
+    p_ID_Paciente Consulta.ID_Paciente%TYPE DEFAULT NULL,
+    p_ID_Dentista Consulta.ID_Dentista%TYPE DEFAULT NULL,
+    p_Status Consulta.Status%TYPE
+) RETURN BOOLEAN IS
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count
+        FROM Consulta
+        WHERE ID_Consulta = p_ID_Consulta;
+        IF v_count < 1 THEN
+            DBMS_OUTPUT.PUT_LINE('Erro: Consulta não consta na tabela!');
+            RETURN FALSE; 
+        END IF;
+    
+    -- Validação do ID_Dentista
+    IF p_ID_Consulta IS NULL THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: ID do dentista é obrigatório para atualização.');
+        RETURN FALSE;
+    END IF;
+    
+    IF p_ID_Paciente IS NOT NULL THEN
+        SELECT COUNT(*) INTO v_count
+        FROM Paciente
+        WHERE ID_Paciente = p_ID_Paciente;
+        
+        IF v_count = 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Erro: Paciente não encontrado.');
+            RETURN FALSE;
+        END IF;
+    END IF;
+    
+    IF p_ID_Dentista IS NOT NULL THEN
+        SELECT COUNT(*) INTO v_count
+        FROM Dentista
+        WHERE ID_Dentista = p_ID_Dentista;
+        
+        IF v_count = 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Erro: Dentista não encontrado.');
+            RETURN FALSE;
+        END IF;
+    END IF;
+    
+    IF p_Data_Consulta IS NOT NULL AND TRIM(p_Data_Consulta) = '' THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta não pode ser vazia se fornecida.');
+        RETURN FALSE;
+    END IF;
+    
+    IF p_Status IS NOT NULL AND p_Status NOT IN ('AGENDADA', 'CONCLUIDA', 'CANCELADA') THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Status inválido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
+        RETURN FALSE;
+    END IF;
+    
+END Valida_Consulta_Update;
+/
+
+--------------------------------------------------------------------------------
 
 -- Função para validar Motivo da consulta e Data de atendimento da consulta
 CREATE OR REPLACE FUNCTION Valida_HistoricoConsulta(
@@ -312,11 +418,6 @@ CREATE OR REPLACE FUNCTION Valida_HistoricoConsulta(
 BEGIN
     -- Verificar se o motivo da consulta não é nulo ou vazio
     IF p_Motivo_Consulta IS NULL OR p_Motivo_Consulta = '' THEN
-        RETURN FALSE;
-    END IF;
-
-    -- Verificar se a data de atendimento não é futura
-    IF p_Data_Atendimento > SYSDATE THEN
         RETURN FALSE;
     END IF;
 

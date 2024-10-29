@@ -3,7 +3,7 @@
 set SERVEROUT ON;
 
 -- Paciente
-
+-- Procedure para Inserir Paciente
 CREATE OR REPLACE PROCEDURE Insert_Paciente(
     p_Nome Paciente.Nome%TYPE,
     p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
@@ -29,10 +29,9 @@ EXCEPTION
 END Insert_Paciente;
 /
 
-EXECUTE Insert_PACIENTE('Eduardo', DATE '2020-05-20', '122.000.444-76', 'Rua do Junin', '(11) 11121-2222', 78557);
+EXECUTE Insert_PACIENTE('João', DATE '2010-12-12', '452.000.444-70', 'Rua Raimundico', '(11) 66121-2322', 76421);
 
---
-
+-- Procedure para Atualizar Paciente
 CREATE OR REPLACE PROCEDURE Update_Paciente(
     p_ID_Paciente Paciente.ID_Paciente%TYPE,
     p_Nome Paciente.Nome%TYPE DEFAULT NULL,
@@ -66,10 +65,9 @@ EXCEPTION
 END Update_Paciente;
 /
 
--- EXECUTE Update_Paciente(7, 'Paulin Bacana', null, '123.456.789-22', 'DOUGLAS', '(11) 15521-2222');
+EXECUTE Update_Paciente(7, 'Thomas', null, '123.456.789-22', 'Rua Madeiros 143', '(11) 13341-2442');
 
---
-
+-- Procedure para Deletar Paciente
 CREATE OR REPLACE PROCEDURE Delete_Paciente(
     p_ID_Paciente Paciente.ID_Paciente%TYPE
 ) IS
@@ -96,6 +94,7 @@ END Delete_Paciente;
 --------------------------------------------------------------------------------
 
 -- Dentista
+-- Procedure para Inserir Dentista
 CREATE OR REPLACE PROCEDURE Insert_Dentista(
     p_Nome Dentista.Nome%TYPE,
     p_CRO Dentista.CRO%TYPE,
@@ -120,7 +119,7 @@ EXCEPTION
 END Insert_Dentista;
 /
 
--- EXECUTE Insert_Dentista(123, 'CRO-12222', 'LEYBRON JAMES', '(11) 1551-1111');
+EXECUTE Insert_Dentista('Dr.Martin', 'CRO-13322', 'RECONSTRUÇÃO', '(11) 1551-1111');
 
 -- Procedure para Atualizar Dentista
 CREATE OR REPLACE PROCEDURE Update_Dentista(
@@ -152,3 +151,89 @@ END Update_Dentista;
 /
 
 EXECUTE Update_Dentista(7, 'Paulin Jr.');
+
+-- Procedure para Deletar Dentista
+CREATE OR REPLACE PROCEDURE Delete_Dentista(
+    p_ID_Dentista Dentista.ID_Dentista%TYPE
+) IS
+BEGIN
+    DELETE FROM Dentista WHERE ID_Dentista = p_ID_Dentista;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Dentista deletado com sucesso.');
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Nenhum dentista encontrado com o ID fornecido.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao deletar dentista: ' || SQLERRM);
+        ROLLBACK;
+END Delete_Dentista;
+/
+
+EXECUTE Delete_Dentista(7);
+
+--------------------------------------------------------------------------------
+
+-- Consulta
+-- Procedure para Inserir Consulta
+CREATE OR REPLACE PROCEDURE Insert_Consulta(
+    p_Data_Consulta Consulta.Data_Consulta%TYPE,
+    p_ID_Paciente Consulta.ID_Paciente%TYPE,
+    p_ID_Dentista Consulta.ID_Dentista%TYPE,
+    p_Status Consulta.Status%TYPE
+) IS
+BEGIN
+    -- Validar informações da consulta com a função Valida_Consulta_Insert
+    IF Valida_Consulta_Insert(p_Data_Consulta, p_ID_Paciente, p_ID_Dentista, UPPER(p_Status)) THEN
+        INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Status)
+        VALUES (seq_consulta.NEXTVAL, p_Data_Consulta, p_ID_Paciente, p_ID_Dentista, UPPER(p_Status));
+        COMMIT;
+        DBMS_OUTPUT.PUT_LINE('Consulta inserida com sucesso.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para a consulta.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir consulta: ' || SQLERRM);
+        ROLLBACK;
+END Insert_Consulta;
+/
+
+EXECUTE INSERT_CONSULTA(TIMESTAMP '2024-10-24 00:00:00', 2, 3, 'cancelada')
+
+-- Função para validar todos os dados da consulta durante a atualização
+CREATE OR REPLACE PROCEDURE Update_Consulta(
+    p_ID_Consulta Consulta.ID_Consulta%TYPE,
+    p_Data_Consulta Consulta.Data_Consulta%TYPE DEFAULT NULL,
+    p_ID_Paciente Consulta.ID_Paciente%TYPE DEFAULT NULL,
+    p_ID_Dentista Consulta.ID_Dentista%TYPE DEFAULT NULL,
+    p_Status Consulta.Status%TYPE DEFAULT NULL
+) IS
+BEGIN
+    -- Validar informações da consulta com a função Valida_Consulta_Update
+    IF Valida_Consulta_Update(p_ID_Consulta, p_Data_Consulta, p_ID_Paciente, p_ID_Dentista, UPPER(p_Status)) THEN
+        UPDATE Consulta
+        SET Data_Consulta = p_Data_Consulta,
+            ID_Paciente = p_ID_Paciente,
+            ID_Dentista = p_ID_Dentista,
+            Status = UPPER(p_Status)
+        WHERE ID_Consulta = p_ID_Consulta;
+
+        -- Verificar se alguma linha foi atualizada
+        IF SQL%ROWCOUNT > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('Consulta atualizada com sucesso.');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Nenhuma consulta encontrada com o ID fornecido.');
+        END IF;
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para a atualização da consulta.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar consulta: ' || SQLERRM);
+        ROLLBACK;
+END Update_Consulta;
+/

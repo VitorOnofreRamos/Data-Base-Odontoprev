@@ -35,19 +35,19 @@ VALUES (seq_dentista.NEXTVAL, 'Dr. Ricardo Almeida', 'CRO-56789', 'Periodontia',
 
 -- Inserir 5 registros na tabela Consulta
 INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Status)
-VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-20 10:30:00', 1, 1, 'Agendada');
+VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-20 10:30:00', 1, 1, 'AGENDADA');
 
 INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Status)
-VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-21 15:00:00', 2, 2, 'Concluída');
+VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-21 15:00:00', 2, 2, 'CONCLUIDA');
 
 INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Status)
-VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-22 09:00:00', 3, 3, 'Cancelada');
+VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-22 09:00:00', 3, 3, 'CANCELADA');
 
 INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Status)
-VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-23 14:30:00', 4, 4, 'Agendada');
+VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-23 14:30:00', 4, 4, 'AGENDADA');
 
 INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Status)
-VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-24 11:00:00', 5, 5, 'Concluída');
+VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-24 11:00:00', 5, 5, 'CONCLUIDA');
 
 -- Inserir 5 registros na tabela HistoricoConsulta
 INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)

@@ -29,8 +29,8 @@ CREATE TABLE Dentista (
 CREATE TABLE Consulta (
     ID_Consulta NUMBER(12) PRIMARY KEY,
     Data_Consulta TIMESTAMP NOT NULL,
-    ID_Paciente NUMBER(12),
-    ID_Dentista NUMBER(12),
+    ID_Paciente NUMBER(12) NOT NULL,
+    ID_Dentista NUMBER(12) NOT NULL,
     Status VARCHAR2(50) NOT NULL,
     FOREIGN KEY (ID_Paciente) REFERENCES Paciente(ID_Paciente),
     FOREIGN KEY (ID_Dentista) REFERENCES Dentista(ID_Dentista)
