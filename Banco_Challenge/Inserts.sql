@@ -4,7 +4,7 @@ EXECUTE Insert_PACIENTE('Carlos Souza', DATE '1988-08-30', '111.222.333-44', 'Ru
 EXECUTE Insert_PACIENTE('Fernanda Lima', DATE '1992-03-15', '222.333.444-55', 'Pça da Liberdade, 9', '(31) 93333-4444', 74444);
 EXECUTE Insert_PACIENTE('Ricardo Oliveira', DATE '1985-11-10', '333.444.555-66', 'Rua dos Navegantes, 21', '(41) 94444-5555', 75555);
 
-EXECUTE Insert_Dentista('Dr. Martin', 'CRO-13322', 'RECONSTRUÇÃO', '(11) 1551-1491');
+EXECUTE Insert_Dentista('Dr. Martin', 'CRO-13322', 'IMPLANTODONTIA', '(11) 1551-1491');
 EXECUTE Insert_Dentista('Dr. João', 'CRO-14444', 'ORTODONTIA', '(11) 1234-5678');
 EXECUTE Insert_Dentista('Dra. Luciana', 'CRO-15555', 'ENDODONTIA', '(21) 8765-4321');
 EXECUTE Insert_Dentista('Dr. Pedro', 'CRO-16666', 'CIRURGIA', '(31) 9876-5432');

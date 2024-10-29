@@ -14,6 +14,7 @@ BEGIN
 
     RETURN v_cursor; -- Retorna o cursor
 END GerarRelatorioConsultas;
+/
 
 --
 
@@ -31,6 +32,7 @@ BEGIN
 
     RETURN v_cursor; -- Retorna o cursor
 END GerarRelatorioPacientes;
+/
 
 --
 
