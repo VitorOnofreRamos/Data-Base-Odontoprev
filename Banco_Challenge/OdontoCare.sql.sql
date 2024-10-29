@@ -38,7 +38,7 @@ CREATE TABLE Consulta (
 
 CREATE TABLE HistoricoConsulta (
     ID_Historico NUMBER(12) PRIMARY KEY,
-    ID_Consulta NUMBER(12),
+    ID_Consulta NUMBER(12) NOT NULL,
     Data_Atendimento TIMESTAMP NOT NULL,
     Motivo_Consulta VARCHAR2(300) NOT NULL,
     Observacoes VARCHAR2(300),

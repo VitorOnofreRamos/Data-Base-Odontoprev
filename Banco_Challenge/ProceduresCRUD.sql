@@ -29,7 +29,7 @@ EXCEPTION
 END Insert_Paciente;
 /
 
-EXECUTE Insert_PACIENTE('João', DATE '2010-12-12', '452.000.444-70', 'Rua Raimundico', '(11) 66121-2322', 76421);
+-- EXECUTE Insert_PACIENTE('João', '2010-12-12', '452.000.444-70', 'Rua Raimundico', '(11) 66121-2322', 76421);
 
 -- Procedure para Atualizar Paciente
 CREATE OR REPLACE PROCEDURE Update_Paciente(
@@ -65,7 +65,7 @@ EXCEPTION
 END Update_Paciente;
 /
 
-EXECUTE Update_Paciente(7, 'Thomas', null, '123.456.789-22', 'Rua Madeiros 143', '(11) 13341-2442');
+-- EXECUTE Update_Paciente(7, 'Thomas', null, '123.456.789-22', 'Rua Madeiros 143', '(11) 13341-2442');
 
 -- Procedure para Deletar Paciente
 CREATE OR REPLACE PROCEDURE Delete_Paciente(
@@ -119,7 +119,7 @@ EXCEPTION
 END Insert_Dentista;
 /
 
-EXECUTE Insert_Dentista('Dr.Martin', 'CRO-13322', 'RECONSTRUÇÃO', '(11) 1551-1111');
+-- EXECUTE Insert_Dentista('Dr.Martin', 'CRO-13322', 'RECONSTRUÇÃO', '(11) 1551-1111');
 
 -- Procedure para Atualizar Dentista
 CREATE OR REPLACE PROCEDURE Update_Dentista(
@@ -150,7 +150,7 @@ EXCEPTION
 END Update_Dentista;
 /
 
-EXECUTE Update_Dentista(7, 'Paulin Jr.');
+-- EXECUTE Update_Dentista(7, 'Paulin Jr.');
 
 -- Procedure para Deletar Dentista
 CREATE OR REPLACE PROCEDURE Delete_Dentista(
@@ -172,7 +172,7 @@ EXCEPTION
 END Delete_Dentista;
 /
 
-EXECUTE Delete_Dentista(7);
+-- EXECUTE Delete_Dentista(7);
 
 --------------------------------------------------------------------------------
 
@@ -201,7 +201,7 @@ EXCEPTION
 END Insert_Consulta;
 /
 
-EXECUTE INSERT_CONSULTA(TIMESTAMP '2024-10-24 00:00:00', 2, 3, 'cancelada')
+-- EXECUTE INSERT_CONSULTA(TIMESTAMP '2024-10-24 00:00:00', 2, 3, 'cancelada')
 
 -- Função para validar todos os dados da consulta durante a atualização
 CREATE OR REPLACE PROCEDURE Update_Consulta(
@@ -212,24 +212,18 @@ CREATE OR REPLACE PROCEDURE Update_Consulta(
     p_Status Consulta.Status%TYPE DEFAULT NULL
 ) IS
 BEGIN
-    -- Validar informações da consulta com a função Valida_Consulta_Update
+    -- Validação dos dados da consulta
     IF Valida_Consulta_Update(p_ID_Consulta, p_Data_Consulta, p_ID_Paciente, p_ID_Dentista, UPPER(p_Status)) THEN
         UPDATE Consulta
-        SET Data_Consulta = p_Data_Consulta,
-            ID_Paciente = p_ID_Paciente,
-            ID_Dentista = p_ID_Dentista,
-            Status = UPPER(p_Status)
+        SET Data_Consulta = COALESCE(p_Data_Consulta, Data_Consulta),
+            ID_Paciente = COALESCE(p_ID_Paciente, ID_Paciente),
+            ID_Dentista = COALESCE(p_ID_Dentista, ID_Dentista),
+            Status = COALESCE(UPPER(p_Status), Status)
         WHERE ID_Consulta = p_ID_Consulta;
-
-        -- Verificar se alguma linha foi atualizada
-        IF SQL%ROWCOUNT > 0 THEN
-            DBMS_OUTPUT.PUT_LINE('Consulta atualizada com sucesso.');
-        ELSE
-            DBMS_OUTPUT.PUT_LINE('Nenhuma consulta encontrada com o ID fornecido.');
-        END IF;
+        DBMS_OUTPUT.PUT_LINE('Consulta atualizada com sucesso.');
         COMMIT;
     ELSE
-        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para a atualização da consulta.');
+        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para atualização de Consulta.');
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
@@ -237,3 +231,62 @@ EXCEPTION
         ROLLBACK;
 END Update_Consulta;
 /
+
+-- EXECUTE Update_Consulta(5, null, 4, null, 'cancelada');
+
+-------------------------------------------------------------------------------- 
+
+CREATE OR REPLACE PROCEDURE Insert_HistoricoConsulta(
+    p_ID_Consulta HistoricoConsulta.ID_Consulta%TYPE,
+    p_Data_Atendimento HistoricoConsulta.Data_Atendimento%TYPE,
+    p_Motivo_Consulta HistoricoConsulta.Motivo_Consulta%TYPE,
+    p_Observacoes HistoricoConsulta.Observacoes%TYPE DEFAULT NULL
+) IS
+BEGIN
+    -- Validar dados da inserção
+    IF Valida_HistoricoConsulta_Insert(p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
+        INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
+        VALUES (seq_historico.NEXTVAL, p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta, p_Observacoes);
+        
+        DBMS_OUTPUT.PUT_LINE('Histórico de consulta inserido com sucesso.');
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para inserção de histórico de consulta.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao inserir histórico de consulta: ' || SQLERRM);
+        ROLLBACK;
+END Insert_HistoricoConsulta;
+/ 
+
+
+CREATE OR REPLACE PROCEDURE Update_HistoricoConsulta(
+    p_ID_Historico HistoricoConsulta.ID_Historico%TYPE,
+    p_ID_Consulta HistoricoConsulta.ID_Consulta%TYPE DEFAULT NULL,
+    p_Data_Atendimento HistoricoConsulta.Data_Atendimento%TYPE DEFAULT NULL,
+    p_Motivo_Consulta HistoricoConsulta.Motivo_Consulta%TYPE DEFAULT NULL,
+    p_Observacoes HistoricoConsulta.Observacoes%TYPE DEFAULT NULL
+) IS
+BEGIN
+    -- Validar dados da atualização
+    IF Valida_HistoricoConsulta_Update(p_ID_Historico, p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
+        UPDATE HistoricoConsulta
+        SET 
+            ID_Consulta = COALESCE(p_ID_Consulta, ID_Consulta),
+            Data_Atendimento = COALESCE(p_Data_Atendimento, Data_Atendimento),
+            Motivo_Consulta = COALESCE(p_Motivo_Consulta, Motivo_Consulta),
+            Observacoes = COALESCE(p_Observacoes, Observacoes)
+        WHERE ID_Historico = p_ID_Historico;
+
+        DBMS_OUTPUT.PUT_LINE('Histórico de consulta atualizado com sucesso.');
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para atualização de histórico de consulta.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao atualizar histórico de consulta: ' || SQLERRM);
+        ROLLBACK;
+END Update_HistoricoConsulta;
+/ 
