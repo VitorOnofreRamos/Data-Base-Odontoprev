@@ -16,9 +16,9 @@ EXECUTE Insert_Consulta(TIMESTAMP '2024-10-26 10:00:00', 1, 3, 'agendada');
 EXECUTE Insert_Consulta(TIMESTAMP '2024-10-27 14:30:00', 2, 3, 'concluida');
 EXECUTE Insert_Consulta(TIMESTAMP '2024-10-28 16:00:00', 3, 1, 'cancelada');
 
-EXECUTE Insert_HistoricoConsulta(1, TIMESTAMP '2024-10-24 12:30:00', 'Reconstrução', 'Paciente orientado sobre cuidados diários.');
-EXECUTE Insert_HistoricoConsulta(2, TIMESTAMP '2024-10-25 09:30:00', 'Consulta de rotina', 'Paciente retornou bem.');
-EXECUTE Insert_HistoricoConsulta(3, TIMESTAMP '2024-10-26 10:30:00', 'Avaliação de ortodontia', 'Pacientes com aparelho.');
-EXECUTE Insert_HistoricoConsulta(4, TIMESTAMP '2024-10-27 15:00:00', 'Extração de dente', '');
-EXECUTE Insert_HistoricoConsulta(5, TIMESTAMP '2024-10-28 17:00:00', 'Consulta de emergência', 'Paciente com dor aguda.');
+EXECUTE Insert_Historico_Consulta(1, TIMESTAMP '2024-10-24 12:30:00', 'Reconstrução', 'Paciente orientado sobre cuidados diários.');
+EXECUTE Insert_Historico_Consulta(2, TIMESTAMP '2024-10-25 09:30:00', 'Consulta de rotina', 'Paciente retornou bem.');
+EXECUTE Insert_Historico_Consulta(3, TIMESTAMP '2024-10-26 10:30:00', 'Avaliação de ortodontia', 'Pacientes com aparelho.');
+EXECUTE Insert_Historico_Consulta(4, TIMESTAMP '2024-10-27 15:00:00', 'Extração de dente', '');
+EXECUTE Insert_Historico_Consulta(5, TIMESTAMP '2024-10-28 17:00:00', 'Consulta de emergência', 'Paciente com dor aguda.');
 

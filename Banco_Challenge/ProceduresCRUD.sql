@@ -234,18 +234,38 @@ END Update_Consulta;
 
 -- EXECUTE Update_Consulta(5, null, 4, null, 'cancelada');
 
+-- Procedure para Deletar Consulta
+CREATE OR REPLACE PROCEDURE Delete_Consulta(
+    p_ID_Consulta Consulta.ID_Consulta%TYPE
+) IS
+BEGIN
+    DELETE FROM Consulta WHERE ID_Consulta = p_ID_Consulta;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Consulta deletada com sucesso.');
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Nenhuma consulta encontrada com o ID fornecido.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao deletar consulta: ' || SQLERRM);
+        ROLLBACK;
+END Delete_Consulta;
+/
+
 -------------------------------------------------------------------------------- 
 
-CREATE OR REPLACE PROCEDURE Insert_HistoricoConsulta(
-    p_ID_Consulta HistoricoConsulta.ID_Consulta%TYPE,
-    p_Data_Atendimento HistoricoConsulta.Data_Atendimento%TYPE,
-    p_Motivo_Consulta HistoricoConsulta.Motivo_Consulta%TYPE,
-    p_Observacoes HistoricoConsulta.Observacoes%TYPE DEFAULT NULL
+CREATE OR REPLACE PROCEDURE Insert_Historico_Consulta(
+    p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE,
+    p_Data_Atendimento Historico_Consulta.Data_Atendimento%TYPE,
+    p_Motivo_Consulta Historico_Consulta.Motivo_Consulta%TYPE,
+    p_Observacoes Historico_Consulta.Observacoes%TYPE DEFAULT NULL
 ) IS
 BEGIN
     -- Validar dados da inserção
-    IF Valida_HistoricoConsulta_Insert(p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
-        INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
+    IF Valida_Historico_Consulta_Insert(p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
+        INSERT INTO Historico_Consulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
         VALUES (seq_historico.NEXTVAL, p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta, p_Observacoes);
         
         DBMS_OUTPUT.PUT_LINE('Histórico de consulta inserido com sucesso.');
@@ -257,21 +277,21 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro ao inserir histórico de consulta: ' || SQLERRM);
         ROLLBACK;
-END Insert_HistoricoConsulta;
+END Insert_Historico_Consulta;
 / 
 
 
-CREATE OR REPLACE PROCEDURE Update_HistoricoConsulta(
-    p_ID_Historico HistoricoConsulta.ID_Historico%TYPE,
-    p_ID_Consulta HistoricoConsulta.ID_Consulta%TYPE DEFAULT NULL,
-    p_Data_Atendimento HistoricoConsulta.Data_Atendimento%TYPE DEFAULT NULL,
-    p_Motivo_Consulta HistoricoConsulta.Motivo_Consulta%TYPE DEFAULT NULL,
-    p_Observacoes HistoricoConsulta.Observacoes%TYPE DEFAULT NULL
+CREATE OR REPLACE PROCEDURE Update_Historico_Consulta(
+    p_ID_Historico Historico_Consulta.ID_Historico%TYPE,
+    p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE DEFAULT NULL,
+    p_Data_Atendimento Historico_Consulta.Data_Atendimento%TYPE DEFAULT NULL,
+    p_Motivo_Consulta Historico_Consulta.Motivo_Consulta%TYPE DEFAULT NULL,
+    p_Observacoes Historico_Consulta.Observacoes%TYPE DEFAULT NULL
 ) IS
 BEGIN
     -- Validar dados da atualização
-    IF Valida_HistoricoConsulta_Update(p_ID_Historico, p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
-        UPDATE HistoricoConsulta
+    IF Valida_Historico_Consulta_Update(p_ID_Historico, p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
+        UPDATE Historico_Consulta
         SET 
             ID_Consulta = COALESCE(p_ID_Consulta, ID_Consulta),
             Data_Atendimento = COALESCE(p_Data_Atendimento, Data_Atendimento),
@@ -288,5 +308,25 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro ao atualizar histórico de consulta: ' || SQLERRM);
         ROLLBACK;
-END Update_HistoricoConsulta;
+END Update_Historico_Consulta;
 / 
+
+
+CREATE OR REPLACE PROCEDURE Delete_Historico_Consulta(
+    p_ID_Historico Historico_Consulta.ID_Historico%TYPE
+) IS
+BEGIN
+    DELETE FROM Historico_Consulta WHERE ID_Historico = p_ID_Historico;
+
+    IF SQL%ROWCOUNT > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Historico de consulta deletada com sucesso.');
+        COMMIT;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Nenhum historico de consulta encontrada com o ID fornecido.');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erro ao deletar historico de consulta: ' || SQLERRM);
+        ROLLBACK;
+END Delete_Historico_Consulta;
+/

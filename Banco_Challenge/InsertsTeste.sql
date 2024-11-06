@@ -50,19 +50,19 @@ INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Stat
 VALUES (seq_consulta.NEXTVAL, TIMESTAMP '2024-10-24 11:00:00', 5, 5, 'CONCLUIDA');
 
 -- Inserir 5 registros na tabela HistoricoConsulta
-INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
+INSERT INTO Historico_Consulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
 VALUES (seq_historico.NEXTVAL, 1, TIMESTAMP '2024-10-20 10:30:00', 'Check-up geral', 'Paciente sem anormalidades.');
 
-INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
+INSERT INTO Historico_Consulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
 VALUES (seq_historico.NEXTVAL, 2, TIMESTAMP '2024-10-21 15:00:00', 'Dor de dente', 'Tratamento de canal realizado.');
 
-INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
+INSERT INTO Historico_Consulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
 VALUES (seq_historico.NEXTVAL, 3, TIMESTAMP '2024-10-22 09:00:00', 'Consulta cancelada', NULL);
 
-INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
+INSERT INTO Historico_Consulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
 VALUES (seq_historico.NEXTVAL, 4, TIMESTAMP '2024-10-23 14:30:00', 'Implante dentário', 'Paciente será acompanhado no pós-operatório.');
 
-INSERT INTO HistoricoConsulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
+INSERT INTO Historico_Consulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
 VALUES (seq_historico.NEXTVAL, 5, TIMESTAMP '2024-10-24 11:00:00', 'Limpeza', 'Paciente orientado sobre cuidados diários.');
 
 Select * From Paciente;

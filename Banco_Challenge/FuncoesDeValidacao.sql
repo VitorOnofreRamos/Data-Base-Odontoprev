@@ -467,10 +467,10 @@ END Valida_Consulta_Update;
 --------------------------------------------------------------------------------
 
 -- Função para validar Motivo da consulta e Data de atendimento da consulta
-CREATE OR REPLACE FUNCTION Valida_HistoricoConsulta_Insert(
-    p_ID_Consulta HistoricoConsulta.ID_Consulta%TYPE,
-    p_Data_Atendimento HistoricoConsulta.Data_Atendimento%Type,
-    p_Motivo_Consulta HistoricoConsulta.Motivo_Consulta%Type
+CREATE OR REPLACE FUNCTION Valida_Historico_Consulta_Insert(
+    p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE,
+    p_Data_Atendimento Historico_Consulta.Data_Atendimento%Type,
+    p_Motivo_Consulta Historico_Consulta.Motivo_Consulta%Type
 ) RETURN BOOLEAN IS
     v_Count NUMBER;
 BEGIN
@@ -498,20 +498,20 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro inesperado: ' || SQLERRM);
         RETURN FALSE;
-END Valida_HistoricoConsulta_Insert;
+END Valida_Historico_Consulta_Insert;
 /
 
-CREATE OR REPLACE FUNCTION Valida_HistoricoConsulta_Update(
-    p_ID_Historico HistoricoConsulta.ID_Historico%TYPE,
-    p_ID_Consulta HistoricoConsulta.ID_Consulta%TYPE DEFAULT NULL,
-    p_Data_Atendimento HistoricoConsulta.Data_Atendimento%Type DEFAULT NULL,
-    p_Motivo_Consulta HistoricoConsulta.Motivo_Consulta%Type DEFAULT NULL
+CREATE OR REPLACE FUNCTION Valida_Historico_Consulta_Update(
+    p_ID_Historico Historico_Consulta.ID_Historico%TYPE,
+    p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE DEFAULT NULL,
+    p_Data_Atendimento Historico_Consulta.Data_Atendimento%Type DEFAULT NULL,
+    p_Motivo_Consulta Historico_Consulta.Motivo_Consulta%Type DEFAULT NULL
 )RETURN BOOLEAN IS
     v_count NUMBER;
 BEGIN
     -- Verifica se a ID_Historico existe
     SELECT COUNT(*) INTO v_Count
-    FROM HistoricoConsulta
+    FROM Historico_Consulta
     WHERE ID_Historico = p_ID_Historico;
     
     IF v_Count = 0 OR p_ID_Historico IS NOT NULL THEN
@@ -547,5 +547,5 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro inesperado: ' || SQLERRM);
         RETURN FALSE;
-END Valida_HistoricoConsulta_Update;
+END Valida_Historico_Consulta_Update;
 /

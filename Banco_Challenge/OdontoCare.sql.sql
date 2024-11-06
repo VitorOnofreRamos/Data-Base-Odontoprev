@@ -36,7 +36,7 @@ CREATE TABLE Consulta (
     FOREIGN KEY (ID_Dentista) REFERENCES Dentista(ID_Dentista)
 );
 
-CREATE TABLE HistoricoConsulta (
+CREATE TABLE Historico_Consulta (
     ID_Historico NUMBER(12) PRIMARY KEY,
     ID_Consulta NUMBER(12) NOT NULL,
     Data_Atendimento TIMESTAMP NOT NULL,

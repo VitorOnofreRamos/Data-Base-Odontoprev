@@ -68,7 +68,7 @@ BEGIN
                p.Nome AS Paciente, d.Nome AS Dentista,
                h.Motivo_Consulta, h.Observacoes
         FROM Consulta c
-        RIGHT JOIN HistoricoConsulta h ON c.ID_Consulta = h.ID_Consulta
+        RIGHT JOIN Historico_Consulta h ON c.ID_Consulta = h.ID_Consulta
         LEFT JOIN Paciente p ON c.ID_Paciente = p.ID_Paciente
         LEFT JOIN Dentista d ON c.ID_Dentista = d.ID_Dentista
         ORDER BY c.Data_Consulta DESC
@@ -82,7 +82,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('------------------------');
     END LOOP;
 
-    SELECT COUNT(*) INTO v_total_historicos FROM HistoricoConsulta;
+    SELECT COUNT(*) INTO v_total_historicos FROM Historico_Consulta;
     DBMS_OUTPUT.PUT_LINE('Total de Registros Históricos: ' || v_total_historicos);
 END;
 /
@@ -117,7 +117,7 @@ DECLARE
     v_id_consulta NUMBER := 1; 
     v_rows_deleted NUMBER;
 BEGIN
-    DELETE FROM HistoricoConsulta
+    DELETE FROM Historico_Consulta
     WHERE ID_Consulta = v_id_consulta;
 
     v_rows_deleted := SQL%ROWCOUNT;
