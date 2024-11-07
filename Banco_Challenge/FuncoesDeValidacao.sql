@@ -514,8 +514,8 @@ BEGIN
     FROM Historico_Consulta
     WHERE ID_Historico = p_ID_Historico;
     
-    IF v_Count = 0 OR p_ID_Historico IS NOT NULL THEN
-        DBMS_OUTPUT.PUT_LINE('Erro: Consulta não consta na tabela!');
+    IF v_Count = 0 OR p_ID_Historico IS NULL THEN
+        DBMS_OUTPUT.PUT_LINE('Erro: Historico não consta na tabela!');
         RETURN FALSE;
     END IF;
 
@@ -527,6 +527,7 @@ BEGIN
 
         IF v_Count = 0 THEN
             RETURN FALSE;
+            DBMS_OUTPUT.PUT_LINE('Erro: Consulta não consta na tabela!');
         END IF;
     END IF;
     
