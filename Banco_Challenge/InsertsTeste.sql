@@ -68,4 +68,4 @@ VALUES (seq_historico.NEXTVAL, 5, TIMESTAMP '2024-10-24 11:00:00', 'Limpeza', 'P
 Select * From Paciente;
 Select * From Dentista;
 Select * From Consulta;
-Select * From HistoricoConsulta;
+Select * From Historico_Consulta;

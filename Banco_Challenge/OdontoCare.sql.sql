@@ -1,7 +1,7 @@
 DROP TABLE Paciente cascade constraints;
 DROP TABLE Dentista cascade constraints;
 DROP TABLE Consulta cascade constraints;
-DROP TABLE HistoricoConsulta cascade constraints;
+DROP TABLE Historico_Consulta cascade constraints;
 
 DROP SEQUENCE seq_paciente;
 DROP SEQUENCE seq_dentista;
