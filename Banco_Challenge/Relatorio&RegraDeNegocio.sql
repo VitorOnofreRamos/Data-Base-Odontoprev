@@ -88,3 +88,33 @@ BEGIN
     CLOSE v_relatorio_pacientes;
 END;
 
+/*
+set SERVEROUTPUT on;
+
+CREATE OR REPLACE PROCEDURE GerarRelatorioConsultas IS
+    CURSOR relatorio_cursor IS
+        SELECT d.Nome AS Dentista,
+               d.Especialidade,
+               COUNT(c.ID_Consulta) AS Total_Consultas,
+               AVG(EXTRACT(DAY FROM (c.Data_Consulta - SYSDATE))) AS Media_Dias_Ate_Consulta,
+               p.Nome AS Paciente,
+               p.CPF
+        FROM Dentista d
+        INNER JOIN Consulta c ON d.ID_Dentista = c.ID_Dentista
+        INNER JOIN Paciente p ON c.ID_Paciente = p.ID_Paciente
+        LEFT JOIN Historico_Consulta h ON c.ID_Consulta = h.ID_Consulta
+        GROUP BY d.Nome, d.Especialidade, p.Nome, p.CPF
+        ORDER BY Total_Consultas DESC;
+BEGIN
+    FOR rec IN relatorio_cursor LOOP
+        DBMS_OUTPUT.PUT_LINE('Dentista: ' || rec.Dentista);
+        DBMS_OUTPUT.PUT_LINE('Especialidade: ' || rec.Especialidade);
+        DBMS_OUTPUT.PUT_LINE('Total de Consultas: ' || rec.Total_Consultas);
+        DBMS_OUTPUT.PUT_LINE('Média de Dias até a Consulta: ' || ROUND(rec.Media_Dias_Ate_Consulta, 2));
+        DBMS_OUTPUT.PUT_LINE('Paciente: ' || rec.Paciente);
+        DBMS_OUTPUT.PUT_LINE('CPF: ' || rec.CPF);
+        DBMS_OUTPUT.PUT_LINE('------------------------');
+    END LOOP;
+END GerarRelatorioConsultas;
+/
+*/
