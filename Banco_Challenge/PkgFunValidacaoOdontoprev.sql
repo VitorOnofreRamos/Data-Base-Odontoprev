@@ -1,5 +1,3 @@
-set SERVEROUTPUT on;
-
 CREATE OR REPLACE PACKAGE Pkg_Fun_Validacao_Odontoprev AS
 
     -- Validação de Tabelas
@@ -83,25 +81,25 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         v_count NUMBER;
     BEGIN
         -- Validação do Nome
-        IF Is_Null_Or_Empty(p_Nome) THEN
+        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Nome é obrigatório.');
             RETURN FALSE;
         END IF;
 
         -- Validação do Endereço
-        IF Is_Null_Or_Empty(p_Endereco) THEN
+        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Endereco) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Endereço é obrigatório.');
             RETURN FALSE;
         END IF;
 
         -- Validação do Telefone
-        IF NOT Valida_Telefone(p_Telefone) THEN
+        IF NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (xx) xxxxx-xxxx.');
             RETURN FALSE;
         END IF;
 
         -- Validação do CPF
-        IF NOT Valida_CPF(p_CPF) THEN
+        IF NOT Pkg_Fun_Auxiliares.Valida_CPF(p_CPF) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: CPF inválido! CPF deve ter 14 caracteres (incluindo pontos e hífen).');
             RETURN FALSE;
         END IF;
@@ -116,13 +114,13 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         END IF;
 
         -- Validação da Data de Nascimento
-        IF NOT Valida_Data_Nascimento(p_Data_Nascimento) THEN
+        IF NOT Pkg_Fun_Auxiliares.Valida_Data_Nascimento(p_Data_Nascimento) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Data de Nascimento não pode ser futura.');
             RETURN FALSE;
         END IF;
 
         -- Validação da Carteirinha
-        IF NOT Valida_Carteirinha(p_Carteirinha) THEN
+        IF NOT Pkg_Fun_Auxiliares.Valida_Carteirinha(p_Carteirinha) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha inválida! Deve ter 5 dígitos.');
             RETURN FALSE;
         END IF;
@@ -171,25 +169,25 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         END IF;
         
         -- Validação do Nome (se fornecido)
-        IF p_Nome IS NOT NULL AND Is_Null_Or_Empty(p_Nome) THEN
+        IF p_Nome IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Nome não pode ser vazio.');
             RETURN FALSE;
         END IF;
 
         -- Validação do Endereço (se fornecido)
-        IF p_Endereco IS NOT NULL AND Is_Null_Or_Empty(p_Endereco) THEN
+        IF p_Endereco IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Endereco) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Endereço não pode ser vazio.');
             RETURN FALSE;
         END IF;
 
         -- Validação do Telefone (se fornecido)
-        IF p_Telefone IS NOT NULL AND NOT Valida_Telefone(p_Telefone) THEN
+        IF p_Telefone IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (xx) xxxxx-xxxx.');
             RETURN FALSE;
         END IF;
 
         -- Validação do CPF (se fornecido)
-        IF p_CPF IS NOT NULL AND NOT Valida_CPF(p_CPF) THEN
+        IF p_CPF IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_CPF(p_CPF) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: CPF inválido! CPF deve ter 14 caracteres (incluindo pontos e hífen).');
             RETURN FALSE;
         END IF;
@@ -206,13 +204,13 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         END IF;
 
         -- Validação da Data de Nascimento (se fornecida)
-        IF p_Data_Nascimento IS NOT NULL AND NOT Valida_Data_Nascimento(p_Data_Nascimento) THEN
+        IF p_Data_Nascimento IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Data_Nascimento(p_Data_Nascimento) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Data de Nascimento não pode ser futura.');
             RETURN FALSE;
         END IF;
 
         -- Validação da Carteirinha (se fornecida)
-            IF p_Carteirinha IS NOT NULL AND NOT Valida_Carteirinha(p_Carteirinha) THEN
+            IF p_Carteirinha IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Carteirinha(p_Carteirinha) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha inválida! Deve ter 5 dígitos.');
             RETURN FALSE;
         END IF;
@@ -249,13 +247,13 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         v_count NUMBER;
     BEGIN
         -- Validação do Nome
-        IF Is_Null_Or_Empty(p_Nome) THEN
+        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Nome é obrigatório.');
             RETURN FALSE;
         END IF;
 
         -- Validação do CRO
-        IF NOT Valida_CRO(p_CRO) THEN
+        IF NOT Pkg_Fun_Auxiliares.Valida_CRO(p_CRO) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: CRO inválido. Formato esperado: CRO-XXXXX.');
             RETURN FALSE;
         END IF;
@@ -270,13 +268,13 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         END IF;
 
         -- Validação da Especialidade
-        IF Is_Null_Or_Empty(p_Especialidade) THEN
+        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Especialidade) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Especialidade é obrigatória.');
             RETURN FALSE;
         END IF;
 
         -- Validação do Telefone
-        IF NOT Valida_Telefone(p_Telefone) THEN
+        IF NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (11) 12345-6789 ou (11) 1234-5678.');
             RETURN FALSE;
         END IF;
@@ -315,14 +313,14 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         END IF;
 
         -- Validação do Nome (opcional)
-        IF p_Nome IS NOT NULL AND Is_Null_OR_Empty(p_Nome) THEN
+        IF p_Nome IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_OR_Empty(p_Nome) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Nome não pode ser vazio se fornecido.');
             RETURN FALSE;
         END IF;
 
         -- Validação do CRO (opcional)
         IF p_CRO IS NOT NULL THEN
-            IF NOT Valida_CRO(p_CRO) THEN
+            IF NOT Pkg_Fun_Auxiliares.Valida_CRO(p_CRO) THEN
                 DBMS_OUTPUT.PUT_LINE('Erro: CRO inválido. Formato esperado: CRO-XXXXX');
                 RETURN FALSE;
             END IF;
@@ -338,14 +336,14 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         END IF;
 
         -- Validação da Especialidade (opcional)
-        IF p_Especialidade IS NOT NULL AND Is_Null_Or_Empty(p_Especialidade) THEN
+        IF p_Especialidade IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Especialidade) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Especialidade não pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
 
         -- Validação do Telefone (opcional)
         IF p_Telefone IS NOT NULL THEN
-            IF NOT Valida_Telefone(p_Telefone) THEN
+            IF NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
                 DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (11) 12345-6789 ou (11) 1234-5678.');
                 RETURN FALSE;
             END IF;
@@ -390,13 +388,13 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         END IF;
 
         -- Verificar se a Data_Consulta não é nula
-        IF Is_Null_Or_Empty(p_Data_Consulta) THEN
+        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Consulta) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta não pode ser nula.');
             RETURN FALSE;
         END IF;
 
         -- Verificar se o Status é válido (valores permitidos: 'AGENDADA', 'CONCLUIDA', 'CANCELADA')
-        IF NOT Valida_Status_Consulta(p_Status) THEN
+        IF NOT Pkg_Fun_Auxiliares.Valida_Status_Consulta(p_Status) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Status inválido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
             RETURN FALSE;
         END IF;
@@ -447,12 +445,12 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             END IF;
         END IF;
     
-        IF p_Data_Consulta IS NOT NULL AND Is_Null_Or_Empty(p_Data_Consulta) THEN
+        IF p_Data_Consulta IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Consulta) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta não pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
     
-        IF p_Status IS NOT NULL AND NOT Valida_Status_Consulta(p_Status) THEN
+        IF p_Status IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Status_Consulta(p_Status) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Status inválido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
             RETURN FALSE;
         END IF;
@@ -484,12 +482,12 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             RETURN FALSE;
         END IF;
 
-        IF Is_Null_Or_Empty(p_Data_Atendimento) THEN
+        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Atendimento) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Data do Atendimento não pode ser nula.');
             RETURN FALSE;
         END IF;
     
-        IF Is_Null_Or_Empty(p_Motivo_Consulta) THEN
+        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Motivo_Consulta) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Motivo da consulta não pode ser nula.');
             RETURN FALSE;
         END IF;
@@ -533,13 +531,13 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             END IF;
         END IF;
     
-        IF p_Data_Atendimento IS NOT NULL AND Is_Null_Or_Empty(p_Data_Atendimento) THEN
+        IF p_Data_Atendimento IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Atendimento) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Data do Atendimento não pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
 
         -- Se algum dos campos obrigatórios de atualização estiver preenchido, valida
-        IF p_Motivo_Consulta IS NOT NULL AND Is_Null_Or_Empty(p_Motivo_Consulta) THEN
+        IF p_Motivo_Consulta IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Motivo_Consulta) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Motivo da Consulta não pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
