@@ -2,13 +2,13 @@ DROP TABLE Paciente cascade constraints;
 DROP TABLE Dentista cascade constraints;
 DROP TABLE Consulta cascade constraints;
 DROP TABLE Historico_Consulta cascade constraints;
-DROP TABLE Auditoria cascade constraints;
+//DROP TABLE Auditoria cascade constraints;
 
 DROP SEQUENCE seq_paciente;
 DROP SEQUENCE seq_dentista;
 DROP SEQUENCE seq_consulta;
 DROP SEQUENCE seq_historico;
-DROP SEQUENCE seq_auditoria;
+//DROP SEQUENCE seq_auditoria;
 
 CREATE TABLE Paciente (
     ID_Paciente NUMBER(12) PRIMARY KEY,
