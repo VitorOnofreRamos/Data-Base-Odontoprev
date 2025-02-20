@@ -1,5 +1,3 @@
-set SERVEROUTPUT on;
-
 CREATE OR REPLACE PACKAGE Pkg_Fun_Auxiliares AS
 
     -- Funções Auxiliares de Validação
