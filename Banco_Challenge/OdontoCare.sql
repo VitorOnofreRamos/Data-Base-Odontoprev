@@ -2,13 +2,13 @@ DROP TABLE Paciente cascade constraints;
 DROP TABLE Dentista cascade constraints;
 DROP TABLE Consulta cascade constraints;
 DROP TABLE Historico_Consulta cascade constraints;
-//DROP TABLE Auditoria cascade constraints;
+DROP TABLE Auditoria_Odontoprev cascade constraints;
 
 DROP SEQUENCE seq_paciente;
 DROP SEQUENCE seq_dentista;
 DROP SEQUENCE seq_consulta;
 DROP SEQUENCE seq_historico;
-//DROP SEQUENCE seq_auditoria;
+DROP SEQUENCE seq_auditoria;
 
 CREATE TABLE Paciente (
     ID_Paciente NUMBER(12) PRIMARY KEY,
@@ -47,22 +47,22 @@ CREATE TABLE Historico_Consulta (
     FOREIGN KEY (ID_Consulta) REFERENCES Consulta(ID_Consulta)
 );
 
-/*
-CREATE TABLE Auditoria (
-    ID_AUDITORIA       NUMBER PRIMARY KEY,
-    TABELA             VARCHAR2(50),
-    OPERACAO           VARCHAR2(10),
-    DATA_OPERACAO      TIMESTAMP,
-    USUARIO            VARCHAR2(50),
-    CHAVE_REGISTRO     NUMBER,
-    VALOR_ANTIGO       VARCHAR2(4000),
-    VALOR_NOVO         VARCHAR2(4000)
+
+CREATE TABLE Auditoria_Odontoprev (
+    ID_AUDITORIA NUMBER PRIMARY KEY,
+    NOME_TABELA VARCHAR2(50),
+    TIPO_OPERACAO VARCHAR2(10),
+    DATA_HORA TIMESTAMP,
+    USUARIO VARCHAR2(50),
+    DADOS_ANTIGOS CLOB,
+    DADOS_NOVOS CLOB,
+    ID_REGISTRO NUMBER
 );
-*/
+
 
 CREATE SEQUENCE seq_paciente START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_dentista START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_consulta START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_historico START WITH 1 INCREMENT BY 1;
-//CREATE SEQUENCE seq_auditoria START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE seq_auditoria START WITH 1 INCREMENT BY 1;
 
