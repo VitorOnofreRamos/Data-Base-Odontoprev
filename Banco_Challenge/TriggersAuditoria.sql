@@ -1,6 +1,4 @@
-set SERVEROUTPUT on;
-
-CREATE OR REPLACE TRIGGER TR_AUDITORIA_ODONTOPREV
+CREATE OR REPLACE TRIGGER trg_auditoria_paciente
     AFTER INSERT OR UPDATE OR DELETE
     ON Paciente
     FOR EACH ROW
@@ -60,6 +58,4 @@ BEGIN
 END;
 /
 
-EXECUTE pkg_procedures_crud_odontoprev.Insert_PACIENTE('Pablo Oliveira', DATE '2004-08-06', '122.233.553-44', 'Rua das Noruga, 728', '(21) 99843-5432', 72231);
-EXECUTE pkg_procedures_crud_odontoprev.Update_PACIENTE(6, 'Pablo Oliveira Jr', DATE '2004-08-06', '122.233.553-44', 'Rua das Noruga, 728', '(21) 99843-5432', 72231);
-EXECUTE pkg_procedures_crud_odontoprev.Delete_PACIENTE(6);
+sfsf
