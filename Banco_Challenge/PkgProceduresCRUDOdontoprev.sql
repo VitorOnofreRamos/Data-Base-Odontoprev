@@ -174,9 +174,9 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 	) IS
 	BEGIN
 		-- Validação dos dados do Dentista
-		IF Pkg_Fun_Validacao_Odontoprev.Valida_Dentista_Insert(p_Nome, p_CRO, p_Especialidade, p_Telefone) THEN
+		IF Pkg_Fun_Validacao_Odontoprev.Valida_Dentista_Insert(p_Nome, p_CRO, UPPER(p_Especialidade), p_Telefone) THEN
 			INSERT INTO Dentista (ID_Dentista, Nome, CRO, Especialidade, Telefone)
-			VALUES (seq_dentista.NEXTVAL, p_Nome, p_CRO, p_Especialidade, p_Telefone);
+			VALUES (seq_dentista.NEXTVAL, p_Nome, p_CRO, UPPER(p_Especialidade), p_Telefone);
 			
 			DBMS_OUTPUT.PUT_LINE('Dentista inserido com sucesso.');
 			COMMIT;
@@ -199,11 +199,11 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 	) IS
 	BEGIN
 		-- Validação dos dados do Dentista
-		IF Pkg_Fun_Validacao_Odontoprev.Valida_Dentista_Update(p_ID_Dentista, p_Nome, p_CRO, p_Especialidade, p_Telefone) THEN
+		IF Pkg_Fun_Validacao_Odontoprev.Valida_Dentista_Update(p_ID_Dentista, p_Nome, p_CRO, UPPER(p_Especialidade), p_Telefone) THEN
 			UPDATE Dentista
 			SET Nome = COALESCE(p_Nome, Nome),
 				CRO = COALESCE(p_CRO, CRO),
-				Especialidade = COALESCE(p_Especialidade, Especialidade),
+				Especialidade = COALESCE(UPPER(p_Especialidade), Especialidade),
 				Telefone = COALESCE(p_Telefone, Telefone)
 			WHERE ID_Dentista = p_ID_Dentista;
 			DBMS_OUTPUT.PUT_LINE('Paciente atualizado com sucesso.');
