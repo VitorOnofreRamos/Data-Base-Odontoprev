@@ -1,6 +1,6 @@
 set SERVEROUTPUT on;
 
-CREATE OR REPLACE PACKAGE pkg_auditoria AS
+CREATE OR REPLACE PACKAGE Pkg_Auditoria_Odontoprev AS
     PROCEDURE registrar_auditoria(
         p_nome_tabela    VARCHAR2,
         p_id_registro    NUMBER,
@@ -8,10 +8,10 @@ CREATE OR REPLACE PACKAGE pkg_auditoria AS
         p_dados_antigos  VARCHAR2,
         p_dados_novos    VARCHAR2
     );
-END pkg_auditoria;
+END Pkg_Auditoria_Odontoprev;
 /
 
-CREATE OR REPLACE PACKAGE BODY pkg_auditoria AS
+CREATE OR REPLACE PACKAGE BODY Pkg_Auditoria_Odontoprev AS
     PROCEDURE registrar_auditoria(
         p_nome_tabela    VARCHAR2,
         p_id_registro    NUMBER,
@@ -36,5 +36,5 @@ CREATE OR REPLACE PACKAGE BODY pkg_auditoria AS
             p_dados_novos
         );
     END registrar_auditoria;
-END pkg_auditoria;
+END Pkg_Auditoria_Odontoprev;
 /

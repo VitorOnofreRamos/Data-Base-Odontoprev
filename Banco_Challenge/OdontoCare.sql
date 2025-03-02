@@ -1,15 +1,18 @@
+-- Drop Project Tables
 DROP TABLE Paciente cascade constraints;
 DROP TABLE Dentista cascade constraints;
 DROP TABLE Consulta cascade constraints;
 DROP TABLE Historico_Consulta cascade constraints;
 DROP TABLE Auditoria_Odontoprev cascade constraints;
 
+-- Drop Project sequences
 DROP SEQUENCE seq_paciente;
 DROP SEQUENCE seq_dentista;
 DROP SEQUENCE seq_consulta;
 DROP SEQUENCE seq_historico;
 DROP SEQUENCE seq_auditoria;
 
+-- Create Project Tables
 CREATE TABLE Paciente (
     ID_Paciente NUMBER(12) PRIMARY KEY,
     Nome VARCHAR2(30) NOT NULL,
@@ -47,7 +50,6 @@ CREATE TABLE Historico_Consulta (
     FOREIGN KEY (ID_Consulta) REFERENCES Consulta(ID_Consulta)
 );
 
-
 CREATE TABLE Auditoria_Odontoprev (
     ID_AUDITORIA NUMBER PRIMARY KEY,
     NOME_TABELA VARCHAR2(50),
@@ -59,7 +61,7 @@ CREATE TABLE Auditoria_Odontoprev (
     DADOS_NOVOS VARCHAR2(4000)
 );
 
-
+-- Create Project Sequences
 CREATE SEQUENCE seq_paciente START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_dentista START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE seq_consulta START WITH 1 INCREMENT BY 1;
