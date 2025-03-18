@@ -11,13 +11,14 @@ O projeto está organizado da seguinte forma:
 ```
 .
 ├── Banco_Challenge/ 
-│   ├── FuncoesDeValidacao.sql      # Funções PL/SQL para validação dos dados antes de inserções e atualizações
-│   ├── Inserts.sql                 # Procedures para inserção de dados nas tabelas do banco
-│   ├── InsertsTeste.sql             # Inserção de dados genéricos para testes
-│   ├── OdontoCare.sql               # Script principal para criar e resetar o banco de dados (DROP TABLE/DROP SEQUENCE + CREATE TABLE)
-│   ├── ProceduresCRUD.sql           # Procedures para operações CRUD (Insert, Update, Delete, Read) com validações
-│   ├── Relatorio&RegraDeNegocio.sql # Função com Cursor e Joins para gerar relatórios formatados
-│   ├── plSQL.sql                    # Conjunto de funções auxiliares para manipulação de dados
+│   ├── Inserts.sql                             # Exução de várias Procedures para inserção de dados nas tabelas do banco.
+│   ├── OdontoCare.sql                          # Script principal para criar e resetar o banco de dados (DROP TABLE/DROP SEQUENCE + CREATE TABLE/SEQUENCE).
+│   ├── PkgFunAuxiliares.sql                    # Pakage com as Funções PL/SQL de validação simples.
+│   ├── PkgFunValidacaoOdontoprev.sql           # Pakage com as Funções compostas para ajudar na validação dos métodos CRUD.
+│   ├── PkgProcedureAuditoriaOdontoprev.sql     # Pakage com a Procedure de responsável por registrar operações em uma tabela de auditoria.
+│   ├── PkgProceduresCRUDOdontoprev.sql         # Pakage com as Procedures para operações CRUD (Insert, Update, Delete, Read) com validações.
+│   ├── PkgProceduresRelatoriosOdontoprev.sql   # Pakage com as Procedures para execução das regra de negócios (relatórios de consulta e auditoria).
+│   ├── TriggerAuditoria.sql                    # Código PL/SQL implementa um sistema de auditoria para a base de dados do sistema OdontoCare.
 ```
 
 ## Estrutura das Tabelas
@@ -76,6 +77,21 @@ CREATE TABLE Historico_Consulta (
 );
 ```
 
+### Auditoria
+Armazena todas as alterações feitas em tabelas do projeto.
+```sql
+CREATE TABLE Auditoria_Odontoprev (
+    ID_AUDITORIA NUMBER PRIMARY KEY,
+    NOME_TABELA VARCHAR2(50),
+    ID_REGISTRO NUMBER,
+    TIPO_OPERACAO VARCHAR2(10),
+    DATA_HORA TIMESTAMP,
+    USUARIO VARCHAR2(50),
+    DADOS_ANTIGOS VARCHAR2(4000),
+    DADOS_NOVOS VARCHAR2(4000)
+);
+```
+
 ## Funcionalidades
 1. Funções de Validação de Entrada de Dados
   - Duas funções de validação garantem que os dados inseridos atendam aos critérios estabelecidos pelo sistema, evitando inconsistências.
@@ -91,7 +107,8 @@ CREATE TABLE Historico_Consulta (
 4. Geração de Relatórios
   - Uma função PL/SQL retorna uma tabela formatada contendo informações cruzadas entre pelo menos duas tabelas.
   - Inclui cursors, JOINs, ORDER BY, e funções agregadas como SUM e COUNT.
-  - Exemplo de uso: relatório de consultas por paciente, listando detalhes de cada atendimento.
+5. Controle de Alterações
+  - A Tabela `Auditoria_Odontoprev` é utilizada para armazenar as mudanças feitas nas demais tabelas do projeto por meio de Triggers.
 
 ## Como Executar
 
@@ -102,8 +119,11 @@ cd Data-Base-Odontoprev/Banco_Challenge
 ```
 2. Conecte-se ao Oracle Database
 3. Execute os scripts na seguinte ordem:
-  - `OdontoCare.sql` → Criação das tabelas e reset do banco
-  - `FuncoesDeValidacao.sql` → Criação das funções de validação
-  - `ProceduresCRUD.sql` → Procedures de manipulação de dados
-  - `Inserts.sql` → Inserção inicial de dados
-  - `Relatorio&RegraDeNegocio.sql` → Geração de relatórios
+  - `OdontoCare.sql` → Criação das tabelas e reset do banco.
+  - `PkgFunAuxiliares.sql ` → Criação das funções de validação auxiliares.
+  - `PkgFunValidacaoOdontoprev.sql ` → Criação das funções de validação das operções CRUD.
+  - `PkgProceduresCRUDOdontoprev.sql ` → Procedures de manipulação de dados.
+  - `PkgProcedureAuditoriaOdontoprev.sql` → Procedures para a tabela Auditoria.
+  - `TriggerAuditoria.sql` → Triggers para ter processo de Auditoria.
+  - `Inserts.sql` → Inserção inicial de dados *modelo* nas tabelas.
+  - `PkgProceduresRelatoriosOdontoprev.sql` → Geração de relatórios das tabelas.
