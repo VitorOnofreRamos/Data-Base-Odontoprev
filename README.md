@@ -127,3 +127,11 @@ cd Data-Base-Odontoprev/Banco_Challenge
   - `TriggerAuditoria.sql` → Triggers para ter processo de Auditoria.
   - `Inserts.sql` → Inserção inicial de dados *modelo* nas tabelas.
   - `PkgProceduresRelatoriosOdontoprev.sql` → Geração de relatórios das tabelas.
+
+## Integrantes do grupo:
+- Vitor Onofre Ramos
+  - RM553241
+- Pedro Henrique Soares Araujo:
+  - RM553801
+- Beatriz Silva:
+  - RM552600
