@@ -5,21 +5,19 @@ CREATE OR REPLACE PACKAGE Pkg_Procedures_CRUD_Odontoprev AS
     p_Nome Paciente.Nome%TYPE,
     p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
     p_CPF Paciente.CPF%TYPE,
-    p_CEP Paciente.CEP%TYPE,
-    p_Endereco Paciente.Endereco%TYPE,
     p_Telefone Paciente.Telefone%TYPE,
-    p_Carteirinha Paciente.Carteirinha%TYPE
+    p_Carteirinha Paciente.Carteirinha%TYPE,
+    p_ID_Endereco Paciente.ID_Endereco%TYPE
   );
 
   PROCEDURE Update_Paciente(
     p_ID_Paciente Paciente.ID_Paciente%TYPE,
     p_Nome Paciente.Nome%TYPE DEFAULT NULL,
     p_Data_Nascimento Paciente.Data_Nascimento%TYPE DEFAULT NULL,
-    p_CEP Paciente.CEP%TYPE DEFAULT NULL,
     p_CPF Paciente.CPF%TYPE DEFAULT NULL,
-    p_Endereco Paciente.Endereco%TYPE DEFAULT NULL,
     p_Telefone Paciente.Telefone%TYPE DEFAULT NULL,
-    p_Carteirinha Paciente.Carteirinha%TYPE DEFAULT NULL
+    p_Carteirinha Paciente.Carteirinha%TYPE DEFAULT NULL,
+    p_ID_Endereco Paciente.ID_Endereco%TYPE DEFAULT NULL
   );
 
   PROCEDURE Delete_Paciente(p_ID_Paciente Paciente.ID_Paciente%TYPE);
@@ -90,16 +88,15 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
         p_Nome Paciente.Nome%TYPE,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
         p_CPF Paciente.CPF%TYPE,
-        p_CEP Paciente.CEP%TYPE,
-        p_Endereco Paciente.Endereco%TYPE,
         p_Telefone Paciente.Telefone%TYPE,
         p_Carteirinha Paciente.Carteirinha%TYPE
+        p_ID_Endereco Paciente.ID_Endereco%TYPE
     ) IS    
     BEGIN
         -- Validar todos os dados do paciente
-        IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Insert(p_Nome, p_Data_Nascimento, p_CPF, p_CEP, p_Endereco, p_Telefone, p_Carteirinha) THEN
-            INSERT INTO Paciente (ID_Paciente, Nome, Data_Nascimento, CPF, CEP, Endereco, Telefone, Carteirinha)
-            VALUES (seq_paciente.NEXTVAL, p_Nome, p_Data_Nascimento, p_CPF, p_CEP, p_Endereco, p_Telefone, p_Carteirinha);
+        IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Insert(p_Nome, p_Data_Nascimento, p_CPF, p_Telefone, p_Carteirinha, p_ID_Endereco) THEN
+            INSERT INTO Paciente (ID_Paciente, Nome, Data_Nascimento, CPF, Telefone, Carteirinha, ID_Endereco)
+            VALUES (seq_paciente.NEXTVAL, p_Nome, p_Data_Nascimento, p_CPF, p_Telefone, p_Carteirinha, p_ID_Endereco);
             DBMS_OUTPUT.PUT_LINE('Paciente inserido com sucesso.');
             COMMIT;
         ELSE
@@ -116,23 +113,21 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 		p_ID_Paciente Paciente.ID_Paciente%TYPE,
 		p_Nome Paciente.Nome%TYPE DEFAULT NULL,
 		p_Data_Nascimento Paciente.Data_Nascimento%TYPE DEFAULT NULL,
-		p_CPF Paciente.CPF%TYPE DEFAULT NULL,
-		p_Endereco Paciente.Endereco%TYPE DEFAULT NULL,
 		p_Telefone Paciente.Telefone%TYPE DEFAULT NULL,
-		p_Carteirinha Paciente.Carteirinha%TYPE DEFAULT NULL
+		p_Carteirinha Paciente.Carteirinha%TYPE DEFAULT NULL,
+		p_ID_Endereco Paciente.ID_Endereco%TYPE DEFAULT NULL
 	) IS
 	BEGIN
 		-- Validar dados do paciente
-		IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Update(p_ID_Paciente, p_Nome, p_Data_Nascimento, p_CPF, p_CEP, p_Endereco, p_Telefone, p_Carteirinha) THEN
+		IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Update(p_ID_Paciente, p_Nome, p_Data_Nascimento, p_CPF, p_Telefone, p_Carteirinha, p_ID_Endereco) THEN
 			UPDATE Paciente
 			SET 
 				Nome = COALESCE(p_Nome, Nome),
 				Data_Nascimento = COALESCE(p_Data_Nascimento, Data_Nascimento),
 				CPF = COALESCE(p_CPF, CPF),
-				CEP = COALESCE(p_CEP, CEP)
-				Endereco = COALESCE(p_Endereco, Endereco),
 				Telefone = COALESCE(p_Telefone, Telefone),
-				Carteirinha = COALESCE(p_Carteirinha, Carteirinha)
+				Carteirinha = COALESCE(p_Carteirinha, Carteirinha),
+				ID_Endereco = COALESCE(p_ID_Endereco, ID_Endereco)
 			WHERE ID_Paciente = p_ID_Paciente;
 			DBMS_OUTPUT.PUT_LINE('Paciente atualizado com sucesso.');
 			COMMIT;

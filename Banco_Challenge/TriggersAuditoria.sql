@@ -17,10 +17,9 @@ BEGIN
                          ', Nome: ' || :NEW.Nome ||
                          ', Data_Nascimento: ' || TO_CHAR(:NEW.Data_Nascimento, 'YYYY-MM-DD') ||
                          ', CPF: ' || :NEW.CPF ||
-                         ', CEP: ' || :NEW.CEP ||
-                         ', Endereco: ' || :NEW.Endereco ||
                          ', Telefone: ' || :NEW.Telefone ||
-                         ', Carteirinha: ' || :NEW.Carteirinha;
+                         ', Carteirinha: ' || :NEW.Carteirinha ||
+						 ', ID_Endereco: ' || :NEW.ID_Endereco;
     ELSIF UPDATING THEN
         v_id_registro := :OLD.ID_Paciente;
         v_operacao := 'UPDATE';
@@ -28,20 +27,18 @@ BEGIN
                            ', Nome: ' || :OLD.Nome ||
                            ', Data_Nascimento: ' || TO_CHAR(:OLD.Data_Nascimento, 'YYYY-MM-DD') ||
                            ', CPF: ' || :OLD.CPF ||
-                           ', CEP: ' || :OLD.CEP ||
-                           ', Endereco: ' || :OLD.Endereco ||
                            ', Telefone: ' || :OLD.Telefone ||
-                           ', Carteirinha: ' || :OLD.Carteirinha;
+                           ', Carteirinha: ' || :OLD.Carteirinha ||
+						   ', ID_Endereco: ' || :OLD.ID_Endereco;
         
         v_id_registro := :NEW.ID_Paciente;                           
         v_dados_novos := 'ID_Paciente: ' || :NEW.ID_Paciente || 
                          ', Nome: ' || :NEW.Nome ||
                          ', Data_Nascimento: ' || TO_CHAR(:NEW.Data_Nascimento, 'YYYY-MM-DD') ||
                          ', CPF: ' || :NEW.CPF ||
-                         ', CEP: ' || :NEW.CEP ||
-                         ', Endereco: ' || :NEW.Endereco ||
                          ', Telefone: ' || :NEW.Telefone ||
-                         ', Carteirinha: ' || :NEW.Carteirinha;
+                         ', Carteirinha: ' || :NEW.Carteirinha ||
+  						 ', ID_Endereco: ' || :NEW.ID_Endereco;
     ELSIF DELETING THEN
         v_id_registro := :OLD.ID_Paciente;
         v_operacao := 'DELETE';
@@ -49,10 +46,9 @@ BEGIN
                            ', Nome: ' || :OLD.Nome ||
                            ', Data_Nascimento: ' || TO_CHAR(:OLD.Data_Nascimento, 'YYYY-MM-DD') ||
                            ', CPF: ' || :OLD.CPF ||
-                           ', CEP: ' || :OLD.CEP ||
-                           ', Endereco: ' || :OLD.Endereco ||
                            ', Telefone: ' || :OLD.Telefone ||
-                           ', Carteirinha: ' || :OLD.Carteirinha;
+                           ', Carteirinha: ' || :OLD.Carteirinha ||
+   						   ', ID_Endereco: ' || :OLD.ID_Endereco;
     END IF;
 
     -- Insere o registro na tabela de auditoria

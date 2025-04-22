@@ -5,8 +5,6 @@ CREATE OR REPLACE PACKAGE Pkg_Fun_Validacao_Odontoprev AS
         p_Nome Paciente.Nome%TYPE,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
         p_CPF Paciente.CPF%TYPE,
-        p_CEP Paciente.CEP%TYPE,
-        p_Endereco Paciente.Endereco%TYPE,
         p_Telefone Paciente.Telefone%TYPE,
         p_Carteirinha Paciente.Carteirinha%TYPE
     ) RETURN BOOLEAN;
@@ -16,8 +14,6 @@ CREATE OR REPLACE PACKAGE Pkg_Fun_Validacao_Odontoprev AS
         p_Nome Paciente.Nome%TYPE DEFAULT NULL,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE DEFAULT NULL,
         p_CPF Paciente.CPF%TYPE DEFAULT NULL,
-        p_CEP Paciente.CEP%TYPE DEFAULT NULL,
-        p_Endereco Paciente.Endereco%TYPE DEFAULT NULL,
         p_Telefone Paciente.Telefone%TYPE DEFAULT NULL,
         p_Carteirinha Paciente.Carteirinha%TYPE DEFAULT NULL
     ) RETURN BOOLEAN;
@@ -76,8 +72,6 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         p_Nome Paciente.Nome%TYPE,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
         p_CPF Paciente.CPF%TYPE,
-        p_CEP Paciente.CEP%TYPE,
-        p_Endereco Paciente.Endereco%TYPE,
         p_Telefone Paciente.Telefone%TYPE,
         p_Carteirinha Paciente.Carteirinha%TYPE
     ) RETURN BOOLEAN IS
@@ -86,18 +80,6 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         -- Valida��o do Nome
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Nome � obrigat�rio.');
-            RETURN FALSE;
-        END IF;
-    
-    	-- Validacao de CEP
-        IF NOT Pkg_Fun_Auxiliares.Valida_CEP(p_CEP) THEN
-        	DBMS_OUTPUT.PUT_LINE('Erro: CEP inv�lido! CEP deve ter 9 caracteres (incluindo h�fen).');
-            RETURN FALSE;
-        END IF;
-
-        -- Valida��o do Endere�o
-        IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Endereco) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Endere�o � obrigat�rio.');
             RETURN FALSE;
         END IF;
 
@@ -157,7 +139,6 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         p_Nome Paciente.Nome%TYPE DEFAULT NULL,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE DEFAULT NULL,
         p_CPF Paciente.CPF%TYPE DEFAULT NULL,
-        p_Endereco Paciente.Endereco%TYPE DEFAULT NULL,
         p_Telefone Paciente.Telefone%TYPE DEFAULT NULL,
         p_Carteirinha Paciente.Carteirinha%TYPE DEFAULT NULL
     ) RETURN BOOLEAN IS
@@ -180,18 +161,6 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         -- Valida��o do Nome (se fornecido)
         IF p_Nome IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
             DBMS_OUTPUT.PUT_LINE('Erro: Nome n�o pode ser vazio.');
-            RETURN FALSE;
-        END IF;
-        
-        -- Validacao de CEP
-        IF NOT Pkg_Fun_Auxiliares.Valida_CEP(p_CEP) THEN
-        	DBMS_OUTPUT.PUT_LINE('Erro: CEP inv�lido! CEP deve ter 9 caracteres (incluindo h�fen).');
-            RETURN FALSE;
-        END IF;
-
-        -- Valida��o do Endere�o (se fornecido)
-        IF p_Endereco IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Endereco) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Endere�o n�o pode ser vazio.');
             RETURN FALSE;
         END IF;
 
