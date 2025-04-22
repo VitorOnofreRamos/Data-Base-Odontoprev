@@ -1,10 +1,11 @@
 CREATE OR REPLACE PACKAGE Pkg_Fun_Validacao_Odontoprev AS
 
-    -- Validação de Tabelas
+    -- Validaï¿½ï¿½o de Tabelas
     FUNCTION Valida_Paciente_Insert(
         p_Nome Paciente.Nome%TYPE,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
         p_CPF Paciente.CPF%TYPE,
+        p_CEP Paciente.CEP%TYPE,
         p_Endereco Paciente.Endereco%TYPE,
         p_Telefone Paciente.Telefone%TYPE,
         p_Carteirinha Paciente.Carteirinha%TYPE
@@ -15,6 +16,7 @@ CREATE OR REPLACE PACKAGE Pkg_Fun_Validacao_Odontoprev AS
         p_Nome Paciente.Nome%TYPE DEFAULT NULL,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE DEFAULT NULL,
         p_CPF Paciente.CPF%TYPE DEFAULT NULL,
+        p_CEP Paciente.CEP%TYPE DEFAULT NULL,
         p_Endereco Paciente.Endereco%TYPE DEFAULT NULL,
         p_Telefone Paciente.Telefone%TYPE DEFAULT NULL,
         p_Carteirinha Paciente.Carteirinha%TYPE DEFAULT NULL
@@ -67,74 +69,81 @@ END Pkg_Fun_Validacao_Odontoprev;
 
 CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
 
-    -- Funções para validar Paciente:
+    -- Funï¿½ï¿½es para validar Paciente:
     
-    -- Função para validar todos os dados do paciente durante a inserção
+    -- Funï¿½ï¿½o para validar todos os dados do paciente durante a inserï¿½ï¿½o
     FUNCTION Valida_Paciente_Insert(
         p_Nome Paciente.Nome%TYPE,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
         p_CPF Paciente.CPF%TYPE,
+        p_CEP Paciente.CEP%TYPE,
         p_Endereco Paciente.Endereco%TYPE,
         p_Telefone Paciente.Telefone%TYPE,
         p_Carteirinha Paciente.Carteirinha%TYPE
     ) RETURN BOOLEAN IS
         v_count NUMBER;
     BEGIN
-        -- Validação do Nome
+        -- Validaï¿½ï¿½o do Nome
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Nome é obrigatório.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Nome ï¿½ obrigatï¿½rio.');
+            RETURN FALSE;
+        END IF;
+    
+    	-- Validacao de CEP
+        IF NOT Pkg_Fun_Auxiliares.Valida_CEP(p_CEP) THEN
+        	DBMS_OUTPUT.PUT_LINE('Erro: CEP invï¿½lido! CEP deve ter 9 caracteres (incluindo hï¿½fen).');
             RETURN FALSE;
         END IF;
 
-        -- Validação do Endereço
+        -- Validaï¿½ï¿½o do Endereï¿½o
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Endereco) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Endereço é obrigatório.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Endereï¿½o ï¿½ obrigatï¿½rio.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do Telefone
+        -- Validaï¿½ï¿½o do Telefone
         IF NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (xx) xxxxx-xxxx.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Telefone invï¿½lido. Formato esperado: (xx) xxxxx-xxxx.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do CPF
+        -- Validaï¿½ï¿½o do CPF
         IF NOT Pkg_Fun_Auxiliares.Valida_CPF(p_CPF) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: CPF inválido! CPF deve ter 14 caracteres (incluindo pontos e hífen).');
+            DBMS_OUTPUT.PUT_LINE('Erro: CPF invï¿½lido! CPF deve ter 14 caracteres (incluindo pontos e hï¿½fen).');
             RETURN FALSE;
         END IF;
-
-        -- Verifica se o CPF já existe na tabela Paciente
+        
+        -- Verifica se o CPF jï¿½ existe na tabela Paciente
         SELECT COUNT(*) INTO v_count
         FROM Paciente
         WHERE CPF = p_CPF;
         IF v_count > 0 THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: CPF já consta na tabela!');
+            DBMS_OUTPUT.PUT_LINE('Erro: CPF jï¿½ consta na tabela!');
             RETURN FALSE; 
         END IF;
 
-        -- Validação da Data de Nascimento
+        -- Validaï¿½ï¿½o da Data de Nascimento
         IF NOT Pkg_Fun_Auxiliares.Valida_Data_Nascimento(p_Data_Nascimento) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Data de Nascimento não pode ser futura.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Data de Nascimento nï¿½o pode ser futura.');
             RETURN FALSE;
         END IF;
 
-        -- Validação da Carteirinha
+        -- Validaï¿½ï¿½o da Carteirinha
         IF NOT Pkg_Fun_Auxiliares.Valida_Carteirinha(p_Carteirinha) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha inválida! Deve ter 5 dígitos.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha invï¿½lida! Deve ter 5 dï¿½gitos.');
             RETURN FALSE;
         END IF;
 
-        -- Verifica se a Carteirinha já existe na tabela Paciente
+        -- Verifica se a Carteirinha jï¿½ existe na tabela Paciente
         SELECT COUNT(*) INTO v_count
         FROM Paciente
         WHERE Carteirinha = p_Carteirinha;
         IF v_count > 0 THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha já consta na tabela!');
+            DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha jï¿½ consta na tabela!');
             RETURN FALSE; 
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Paciente válido para inserção.');
+        DBMS_OUTPUT.PUT_LINE('Paciente vï¿½lido para inserï¿½ï¿½o.');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN
@@ -142,7 +151,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             RETURN FALSE;
     END Valida_Paciente_Insert;
     
-    -- Função para validar dados do paciente durante a atualização
+    -- Funï¿½ï¿½o para validar dados do paciente durante a atualizaï¿½ï¿½o
     FUNCTION Valida_Paciente_Update(
         p_ID_Paciente Paciente.ID_Paciente%TYPE,
         p_Nome Paciente.Nome%TYPE DEFAULT NULL,
@@ -158,75 +167,81 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             FROM Paciente
             WHERE ID_Paciente = p_ID_Paciente;
         IF v_count < 1 THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Paciente não consta na tabela!');
+            DBMS_OUTPUT.PUT_LINE('Erro: Paciente nï¿½o consta na tabela!');
             RETURN FALSE; 
         END IF;
         
-        -- Validação do ID_Paciente
+        -- Validaï¿½ï¿½o do ID_Paciente
         IF p_ID_Paciente IS NULL THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: ID do paciente é obrigatório para atualização.');
+            DBMS_OUTPUT.PUT_LINE('Erro: ID do paciente ï¿½ obrigatï¿½rio para atualizaï¿½ï¿½o.');
             RETURN FALSE;
         END IF;
         
-        -- Validação do Nome (se fornecido)
+        -- Validaï¿½ï¿½o do Nome (se fornecido)
         IF p_Nome IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Nome não pode ser vazio.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Nome nï¿½o pode ser vazio.');
+            RETURN FALSE;
+        END IF;
+        
+        -- Validacao de CEP
+        IF NOT Pkg_Fun_Auxiliares.Valida_CEP(p_CEP) THEN
+        	DBMS_OUTPUT.PUT_LINE('Erro: CEP invï¿½lido! CEP deve ter 9 caracteres (incluindo hï¿½fen).');
             RETURN FALSE;
         END IF;
 
-        -- Validação do Endereço (se fornecido)
+        -- Validaï¿½ï¿½o do Endereï¿½o (se fornecido)
         IF p_Endereco IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Endereco) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Endereço não pode ser vazio.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Endereï¿½o nï¿½o pode ser vazio.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do Telefone (se fornecido)
+        -- Validaï¿½ï¿½o do Telefone (se fornecido)
         IF p_Telefone IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (xx) xxxxx-xxxx.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Telefone invï¿½lido. Formato esperado: (xx) xxxxx-xxxx.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do CPF (se fornecido)
+        -- Validaï¿½ï¿½o do CPF (se fornecido)
         IF p_CPF IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_CPF(p_CPF) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: CPF inválido! CPF deve ter 14 caracteres (incluindo pontos e hífen).');
+            DBMS_OUTPUT.PUT_LINE('Erro: CPF invï¿½lido! CPF deve ter 14 caracteres (incluindo pontos e hï¿½fen).');
             RETURN FALSE;
         END IF;
 
-        -- Verifica se o CPF já existe na tabela (exceto para o paciente atual)
+        -- Verifica se o CPF jï¿½ existe na tabela (exceto para o paciente atual)
         IF p_CPF IS NOT NULL THEN
             SELECT COUNT(*) INTO v_count
             FROM Paciente
             WHERE CPF = p_CPF AND ID_Paciente != p_ID_Paciente;
             IF v_count > 0 THEN
-                DBMS_OUTPUT.PUT_LINE('Erro: CPF já consta na tabela!');
+                DBMS_OUTPUT.PUT_LINE('Erro: CPF jï¿½ consta na tabela!');
                 RETURN FALSE; 
             END IF;
         END IF;
 
-        -- Validação da Data de Nascimento (se fornecida)
+        -- Validaï¿½ï¿½o da Data de Nascimento (se fornecida)
         IF p_Data_Nascimento IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Data_Nascimento(p_Data_Nascimento) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Data de Nascimento não pode ser futura.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Data de Nascimento nï¿½o pode ser futura.');
             RETURN FALSE;
         END IF;
 
-        -- Validação da Carteirinha (se fornecida)
+        -- Validaï¿½ï¿½o da Carteirinha (se fornecida)
             IF p_Carteirinha IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Carteirinha(p_Carteirinha) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha inválida! Deve ter 5 dígitos.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Carteirinha invï¿½lida! Deve ter 5 dï¿½gitos.');
             RETURN FALSE;
         END IF;
     
-        -- Verifica se a Carterinha já existe na tabela (exceto para o paciente atual)
+        -- Verifica se a Carterinha jï¿½ existe na tabela (exceto para o paciente atual)
         IF p_Carteirinha IS NOT NULL THEN
             SELECT COUNT(*) INTO v_count
             FROM Paciente
             WHERE Carteirinha = p_Carteirinha AND ID_Paciente != p_ID_Paciente;
             IF v_count > 0 THEN
-                DBMS_OUTPUT.PUT_LINE('Erro: Carterinha já consta na tabela!');
+                DBMS_OUTPUT.PUT_LINE('Erro: Carterinha jï¿½ consta na tabela!');
                 RETURN FALSE;
             END IF;
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Dados válidos para atualização.');
+        DBMS_OUTPUT.PUT_LINE('Dados vï¿½lidos para atualizaï¿½ï¿½o.');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN
@@ -235,9 +250,9 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
     END Valida_Paciente_Update;
     
     
-    -- Funções para validar Dentista :
+    -- Funï¿½ï¿½es para validar Dentista :
     
-    -- Função para validar todos os dados do dentista durante a inserção
+    -- Funï¿½ï¿½o para validar todos os dados do dentista durante a inserï¿½ï¿½o
     FUNCTION Valida_Dentista_Insert(
         p_Nome Dentista.Nome%TYPE,
         p_CRO Dentista.CRO%TYPE,
@@ -246,40 +261,40 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
     ) RETURN BOOLEAN IS
         v_count NUMBER;
     BEGIN
-        -- Validação do Nome
+        -- Validaï¿½ï¿½o do Nome
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Nome) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Nome é obrigatório.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Nome ï¿½ obrigatï¿½rio.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do CRO
+        -- Validaï¿½ï¿½o do CRO
         IF NOT Pkg_Fun_Auxiliares.Valida_CRO(p_CRO) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: CRO inválido. Formato esperado: CRO-XXXXX.');
+            DBMS_OUTPUT.PUT_LINE('Erro: CRO invï¿½lido. Formato esperado: CRO-XXXXX.');
             RETURN FALSE;
         END IF;
 
-        -- Verifica se o CRO já existe na tabela Dentista
+        -- Verifica se o CRO jï¿½ existe na tabela Dentista
         SELECT COUNT(*) INTO v_count
         FROM Dentista
         WHERE CRO = p_CRO;
         IF v_count > 0 THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: CRO já consta na tabela!');
+            DBMS_OUTPUT.PUT_LINE('Erro: CRO jï¿½ consta na tabela!');
             RETURN FALSE; 
         END IF;
 
-        -- Validação da Especialidade
+        -- Validaï¿½ï¿½o da Especialidade
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Especialidade) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Especialidade é obrigatória.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Especialidade ï¿½ obrigatï¿½ria.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do Telefone
+        -- Validaï¿½ï¿½o do Telefone
         IF NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (11) 12345-6789 ou (11) 1234-5678.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Telefone invï¿½lido. Formato esperado: (11) 12345-6789 ou (11) 1234-5678.');
             RETURN FALSE;
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Dentista válido para inserção.');
+        DBMS_OUTPUT.PUT_LINE('Dentista vï¿½lido para inserï¿½ï¿½o.');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN
@@ -287,7 +302,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             RETURN FALSE;
     END Valida_Dentista_Insert;
 
-    -- Função para validar todos os dados do paciente durante a atualização
+    -- Funï¿½ï¿½o para validar todos os dados do paciente durante a atualizaï¿½ï¿½o
     FUNCTION Valida_Dentista_Update(
         p_ID_Dentista Dentista.ID_Dentista%TYPE,
         p_Nome Dentista.Nome%TYPE DEFAULT NULL,
@@ -302,54 +317,54 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         FROM Dentista
         WHERE ID_Dentista = p_ID_Dentista;
         IF v_count < 1 THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Dentista não consta na tabela!');
+            DBMS_OUTPUT.PUT_LINE('Erro: Dentista nï¿½o consta na tabela!');
             RETURN FALSE; 
         END IF;
 
-        -- Validação do ID_Dentista
+        -- Validaï¿½ï¿½o do ID_Dentista
         IF p_ID_Dentista IS NULL THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: ID do dentista é obrigatório para atualização.');
+            DBMS_OUTPUT.PUT_LINE('Erro: ID do dentista ï¿½ obrigatï¿½rio para atualizaï¿½ï¿½o.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do Nome (opcional)
+        -- Validaï¿½ï¿½o do Nome (opcional)
         IF p_Nome IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_OR_Empty(p_Nome) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Nome não pode ser vazio se fornecido.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Nome nï¿½o pode ser vazio se fornecido.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do CRO (opcional)
+        -- Validaï¿½ï¿½o do CRO (opcional)
         IF p_CRO IS NOT NULL THEN
             IF NOT Pkg_Fun_Auxiliares.Valida_CRO(p_CRO) THEN
-                DBMS_OUTPUT.PUT_LINE('Erro: CRO inválido. Formato esperado: CRO-XXXXX');
+                DBMS_OUTPUT.PUT_LINE('Erro: CRO invï¿½lido. Formato esperado: CRO-XXXXX');
                 RETURN FALSE;
             END IF;
 
-            -- Verifica se o CRO já existe na tabela Dentista
+            -- Verifica se o CRO jï¿½ existe na tabela Dentista
             SELECT COUNT(*) INTO v_count
             FROM Dentista
             WHERE CRO = p_CRO AND ID_Dentista != p_ID_Dentista; 
             IF v_count > 0 THEN
-                DBMS_OUTPUT.PUT_LINE('Erro: CRO já consta na tabela!');
+                DBMS_OUTPUT.PUT_LINE('Erro: CRO jï¿½ consta na tabela!');
                 RETURN FALSE; 
             END IF;
         END IF;
 
-        -- Validação da Especialidade (opcional)
+        -- Validaï¿½ï¿½o da Especialidade (opcional)
         IF p_Especialidade IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Especialidade) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Especialidade não pode ser vazia se fornecida.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Especialidade nï¿½o pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
 
-        -- Validação do Telefone (opcional)
+        -- Validaï¿½ï¿½o do Telefone (opcional)
         IF p_Telefone IS NOT NULL THEN
             IF NOT Pkg_Fun_Auxiliares.Valida_Telefone(p_Telefone) THEN
-                DBMS_OUTPUT.PUT_LINE('Erro: Telefone inválido. Formato esperado: (11) 12345-6789 ou (11) 1234-5678.');
+                DBMS_OUTPUT.PUT_LINE('Erro: Telefone invï¿½lido. Formato esperado: (11) 12345-6789 ou (11) 1234-5678.');
                 RETURN FALSE;
             END IF;
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Dentista válido para atualização.');
+        DBMS_OUTPUT.PUT_LINE('Dentista vï¿½lido para atualizaï¿½ï¿½o.');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN
@@ -358,9 +373,9 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
     END Valida_Dentista_Update;
     
     
-    -- Funções para validar Consulta
+    -- Funï¿½ï¿½es para validar Consulta
     
-    -- Função para validar dados de inserção na tabela Consulta
+    -- Funï¿½ï¿½o para validar dados de inserï¿½ï¿½o na tabela Consulta
     FUNCTION Valida_Consulta_Insert (
         p_Data_Consulta Consulta.Data_Consulta%TYPE,
         p_ID_Paciente Consulta.ID_Paciente%TYPE,
@@ -374,7 +389,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         FROM Paciente
         WHERE ID_Paciente = p_ID_Paciente;
         IF v_count = 0 OR p_ID_Paciente IS NULL THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Paciente não encontrado.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Paciente nï¿½o encontrado.');
             RETURN FALSE;
         END IF;
 
@@ -383,23 +398,23 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         FROM Dentista
         WHERE ID_Dentista = p_ID_Dentista;
         IF v_count = 0 OR p_ID_Dentista IS NULL THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Dentista não encontrado.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Dentista nï¿½o encontrado.');
             RETURN FALSE;
         END IF;
 
-        -- Verificar se a Data_Consulta não é nula
+        -- Verificar se a Data_Consulta nï¿½o ï¿½ nula
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Consulta) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta não pode ser nula.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta nï¿½o pode ser nula.');
             RETURN FALSE;
         END IF;
 
-        -- Verificar se o Status é válido (valores permitidos: 'AGENDADA', 'CONCLUIDA', 'CANCELADA')
+        -- Verificar se o Status ï¿½ vï¿½lido (valores permitidos: 'AGENDADA', 'CONCLUIDA', 'CANCELADA')
         IF NOT Pkg_Fun_Auxiliares.Valida_Status_Consulta(p_Status) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Status inválido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Status invï¿½lido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
             RETURN FALSE;
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Consulta válida para inserção.');
+        DBMS_OUTPUT.PUT_LINE('Consulta vï¿½lida para inserï¿½ï¿½o.');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN
@@ -407,7 +422,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             RETURN FALSE;
     END Valida_Consulta_Insert;
 
-    -- Função para validar dados de atualização na tabela Consulta
+    -- Funï¿½ï¿½o para validar dados de atualizaï¿½ï¿½o na tabela Consulta
     FUNCTION Valida_Consulta_Update (
         p_ID_Consulta Consulta.ID_Consulta%TYPE,
         p_Data_Consulta Consulta.Data_Consulta%TYPE DEFAULT NULL,
@@ -421,7 +436,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         FROM Consulta
         WHERE ID_Consulta = p_ID_Consulta;
         IF v_count < 0 OR p_ID_Consulta IS NULL THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Consulta não consta na tabela!');
+            DBMS_OUTPUT.PUT_LINE('Erro: Consulta nï¿½o consta na tabela!');
             RETURN FALSE; 
         END IF;
     
@@ -430,7 +445,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             FROM Paciente
             WHERE ID_Paciente = p_ID_Paciente;
             IF v_count = 0 THEN
-                DBMS_OUTPUT.PUT_LINE('Erro: Paciente não encontrado.');
+                DBMS_OUTPUT.PUT_LINE('Erro: Paciente nï¿½o encontrado.');
                 RETURN FALSE;
             END IF;
         END IF;
@@ -440,22 +455,22 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             FROM Dentista
             WHERE ID_Dentista = p_ID_Dentista;
             IF v_count = 0 THEN
-                DBMS_OUTPUT.PUT_LINE('Erro: Dentista não encontrado.');
+                DBMS_OUTPUT.PUT_LINE('Erro: Dentista nï¿½o encontrado.');
                 RETURN FALSE;
             END IF;
         END IF;
     
         IF p_Data_Consulta IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Consulta) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta não pode ser vazia se fornecida.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Data da Consulta nï¿½o pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
     
         IF p_Status IS NOT NULL AND NOT Pkg_Fun_Auxiliares.Valida_Status_Consulta(p_Status) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Status inválido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Status invï¿½lido. Use: AGENDADA, CONCLUIDA ou CANCELADA.');
             RETURN FALSE;
         END IF;
     
-        DBMS_OUTPUT.PUT_LINE('Consulta válida para atualização.');
+        DBMS_OUTPUT.PUT_LINE('Consulta vï¿½lida para atualizaï¿½ï¿½o.');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN
@@ -464,9 +479,9 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
     END Valida_Consulta_Update;
     
     
-    -- Funções para validar Histórico de Consulta (motivo da consulta e data de atendimento da consulta)
+    -- Funï¿½ï¿½es para validar Histï¿½rico de Consulta (motivo da consulta e data de atendimento da consulta)
 
-    -- Função para validar dados de inserção da tabela Historico_Consulta
+    -- Funï¿½ï¿½o para validar dados de inserï¿½ï¿½o da tabela Historico_Consulta
     FUNCTION Valida_Historico_Consulta_Insert(
         p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE,
         p_Data_Atendimento Historico_Consulta.Data_Atendimento%Type,
@@ -478,21 +493,21 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         FROM Consulta
         WHERE ID_Consulta = p_ID_Consulta;
         IF v_Count = 0 OR p_ID_Consulta IS NULL THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Consulta não encontrada.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Consulta nï¿½o encontrada.');
             RETURN FALSE;
         END IF;
 
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Atendimento) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Data do Atendimento não pode ser nula.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Data do Atendimento nï¿½o pode ser nula.');
             RETURN FALSE;
         END IF;
     
         IF Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Motivo_Consulta) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Motivo da consulta não pode ser nula.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Motivo da consulta nï¿½o pode ser nula.');
             RETURN FALSE;
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Histórico de consulta válido para inserção.');
+        DBMS_OUTPUT.PUT_LINE('Histï¿½rico de consulta vï¿½lido para inserï¿½ï¿½o.');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN
@@ -500,7 +515,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
             RETURN FALSE;
     END Valida_Historico_Consulta_Insert;
 
-    -- Função para validar dados de atualização na tabela Historico_Consulta
+    -- Funï¿½ï¿½o para validar dados de atualizaï¿½ï¿½o na tabela Historico_Consulta
     FUNCTION Valida_Historico_Consulta_Update(
         p_ID_Historico Historico_Consulta.ID_Historico%TYPE,
         p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE DEFAULT NULL,
@@ -515,7 +530,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
         WHERE ID_Historico = p_ID_Historico;
     
         IF v_Count = 0 OR p_ID_Historico IS NULL THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Historico não consta na tabela!');
+            DBMS_OUTPUT.PUT_LINE('Erro: Historico nï¿½o consta na tabela!');
             RETURN FALSE;
         END IF;
 
@@ -527,22 +542,22 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Fun_Validacao_Odontoprev AS
 
             IF v_Count = 0 THEN
                 RETURN FALSE;
-                DBMS_OUTPUT.PUT_LINE('Erro: Consulta não consta na tabela!');
+                DBMS_OUTPUT.PUT_LINE('Erro: Consulta nï¿½o consta na tabela!');
             END IF;
         END IF;
     
         IF p_Data_Atendimento IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Data_Atendimento) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Data do Atendimento não pode ser vazia se fornecida.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Data do Atendimento nï¿½o pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
 
-        -- Se algum dos campos obrigatórios de atualização estiver preenchido, valida
+        -- Se algum dos campos obrigatï¿½rios de atualizaï¿½ï¿½o estiver preenchido, valida
         IF p_Motivo_Consulta IS NOT NULL AND Pkg_Fun_Auxiliares.Is_Null_Or_Empty(p_Motivo_Consulta) THEN
-            DBMS_OUTPUT.PUT_LINE('Erro: Motivo da Consulta não pode ser vazia se fornecida.');
+            DBMS_OUTPUT.PUT_LINE('Erro: Motivo da Consulta nï¿½o pode ser vazia se fornecida.');
             RETURN FALSE;
         END IF;
 
-        DBMS_OUTPUT.PUT_LINE('Histórico de consulta válido para atualização');
+        DBMS_OUTPUT.PUT_LINE('Histï¿½rico de consulta vï¿½lido para atualizaï¿½ï¿½o');
         RETURN TRUE;
     EXCEPTION
         WHEN OTHERS THEN

@@ -5,6 +5,7 @@ CREATE OR REPLACE PACKAGE Pkg_Procedures_CRUD_Odontoprev AS
     p_Nome Paciente.Nome%TYPE,
     p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
     p_CPF Paciente.CPF%TYPE,
+    p_CEP Paciente.CEP%TYPE,
     p_Endereco Paciente.Endereco%TYPE,
     p_Telefone Paciente.Telefone%TYPE,
     p_Carteirinha Paciente.Carteirinha%TYPE
@@ -14,6 +15,7 @@ CREATE OR REPLACE PACKAGE Pkg_Procedures_CRUD_Odontoprev AS
     p_ID_Paciente Paciente.ID_Paciente%TYPE,
     p_Nome Paciente.Nome%TYPE DEFAULT NULL,
     p_Data_Nascimento Paciente.Data_Nascimento%TYPE DEFAULT NULL,
+    p_CEP Paciente.CEP%TYPE DEFAULT NULL,
     p_CPF Paciente.CPF%TYPE DEFAULT NULL,
     p_Endereco Paciente.Endereco%TYPE DEFAULT NULL,
     p_Telefone Paciente.Telefone%TYPE DEFAULT NULL,
@@ -58,7 +60,7 @@ CREATE OR REPLACE PACKAGE Pkg_Procedures_CRUD_Odontoprev AS
 
   PROCEDURE Delete_Consulta(p_ID_Consulta Consulta.ID_Consulta%TYPE);
 
-  -- Procedures para Histórico de Consulta
+  -- Procedures para Histï¿½rico de Consulta
   PROCEDURE Insert_Historico_Consulta(
     p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE,
     p_Data_Atendimento Historico_Consulta.Data_Atendimento%TYPE,
@@ -88,19 +90,20 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
         p_Nome Paciente.Nome%TYPE,
         p_Data_Nascimento Paciente.Data_Nascimento%TYPE,
         p_CPF Paciente.CPF%TYPE,
+        p_CEP Paciente.CEP%TYPE,
         p_Endereco Paciente.Endereco%TYPE,
         p_Telefone Paciente.Telefone%TYPE,
         p_Carteirinha Paciente.Carteirinha%TYPE
     ) IS    
     BEGIN
         -- Validar todos os dados do paciente
-        IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Insert(p_Nome, p_Data_Nascimento, p_CPF, p_Endereco, p_Telefone, p_Carteirinha) THEN
-            INSERT INTO Paciente (ID_Paciente, Nome, Data_Nascimento, CPF, Endereco, Telefone, Carteirinha)
-            VALUES (seq_paciente.NEXTVAL, p_Nome, p_Data_Nascimento, p_CPF, p_Endereco, p_Telefone, p_Carteirinha);
+        IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Insert(p_Nome, p_Data_Nascimento, p_CPF, p_CEP, p_Endereco, p_Telefone, p_Carteirinha) THEN
+            INSERT INTO Paciente (ID_Paciente, Nome, Data_Nascimento, CPF, CEP, Endereco, Telefone, Carteirinha)
+            VALUES (seq_paciente.NEXTVAL, p_Nome, p_Data_Nascimento, p_CPF, p_CEP, p_Endereco, p_Telefone, p_Carteirinha);
             DBMS_OUTPUT.PUT_LINE('Paciente inserido com sucesso.');
             COMMIT;
         ELSE
-            DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada.');
+            DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada.');
         END IF;
     EXCEPTION
         WHEN OTHERS THEN
@@ -120,12 +123,13 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 	) IS
 	BEGIN
 		-- Validar dados do paciente
-		IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Update(p_ID_Paciente, p_Nome, p_Data_Nascimento, p_CPF, p_Endereco, p_Telefone, p_Carteirinha) THEN
+		IF Pkg_Fun_Validacao_Odontoprev.Valida_Paciente_Update(p_ID_Paciente, p_Nome, p_Data_Nascimento, p_CPF, p_CEP, p_Endereco, p_Telefone, p_Carteirinha) THEN
 			UPDATE Paciente
 			SET 
 				Nome = COALESCE(p_Nome, Nome),
 				Data_Nascimento = COALESCE(p_Data_Nascimento, Data_Nascimento),
 				CPF = COALESCE(p_CPF, CPF),
+				CEP = COALESCE(p_CEP, CEP)
 				Endereco = COALESCE(p_Endereco, Endereco),
 				Telefone = COALESCE(p_Telefone, Telefone),
 				Carteirinha = COALESCE(p_Carteirinha, Carteirinha)
@@ -133,7 +137,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 			DBMS_OUTPUT.PUT_LINE('Paciente atualizado com sucesso.');
 			COMMIT;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada.');
+			DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada.');
 		END IF;
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -173,7 +177,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 		p_Telefone Dentista.Telefone%TYPE
 	) IS
 	BEGIN
-		-- Validação dos dados do Dentista
+		-- Validaï¿½ï¿½o dos dados do Dentista
 		IF Pkg_Fun_Validacao_Odontoprev.Valida_Dentista_Insert(p_Nome, p_CRO, UPPER(p_Especialidade), p_Telefone) THEN
 			INSERT INTO Dentista (ID_Dentista, Nome, CRO, Especialidade, Telefone)
 			VALUES (seq_dentista.NEXTVAL, p_Nome, p_CRO, UPPER(p_Especialidade), p_Telefone);
@@ -181,7 +185,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 			DBMS_OUTPUT.PUT_LINE('Dentista inserido com sucesso.');
 			COMMIT;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para inserção de Dentista.');
+			DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada para inserï¿½ï¿½o de Dentista.');
 		END IF;
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -198,7 +202,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 		p_Telefone Dentista.Telefone%TYPE DEFAULT NULL
 	) IS
 	BEGIN
-		-- Validação dos dados do Dentista
+		-- Validaï¿½ï¿½o dos dados do Dentista
 		IF Pkg_Fun_Validacao_Odontoprev.Valida_Dentista_Update(p_ID_Dentista, p_Nome, p_CRO, UPPER(p_Especialidade), p_Telefone) THEN
 			UPDATE Dentista
 			SET Nome = COALESCE(p_Nome, Nome),
@@ -209,7 +213,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 			DBMS_OUTPUT.PUT_LINE('Paciente atualizado com sucesso.');
 			COMMIT;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para atualização de Dentista.');
+			DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada para atualizaï¿½ï¿½o de Dentista.');
 		END IF;
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -247,14 +251,14 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 		p_Status Consulta.Status%TYPE
 	) IS
 	BEGIN
-		-- Validar informações da consulta com a função Valida_Consulta_Insert
+		-- Validar informaï¿½ï¿½es da consulta com a funï¿½ï¿½o Valida_Consulta_Insert
 		IF Pkg_Fun_Validacao_Odontoprev.Valida_Consulta_Insert(p_Data_Consulta, p_ID_Paciente, p_ID_Dentista, UPPER(p_Status)) THEN
 			INSERT INTO Consulta (ID_Consulta, Data_Consulta, ID_Paciente, ID_Dentista, Status)
 			VALUES (seq_consulta.NEXTVAL, p_Data_Consulta, p_ID_Paciente, p_ID_Dentista, UPPER(p_Status));
 			COMMIT;
 			DBMS_OUTPUT.PUT_LINE('Consulta inserida com sucesso.');
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para a consulta.');
+			DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada para a consulta.');
 		END IF;
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -262,7 +266,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 			ROLLBACK;
 	END Insert_Consulta;
     
-    -- Função para Atualizar Consulta
+    -- Funï¿½ï¿½o para Atualizar Consulta
 	PROCEDURE Update_Consulta(
 		p_ID_Consulta Consulta.ID_Consulta%TYPE,
 		p_Data_Consulta Consulta.Data_Consulta%TYPE DEFAULT NULL,
@@ -271,7 +275,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 		p_Status Consulta.Status%TYPE DEFAULT NULL
 	) IS
 	BEGIN
-		-- Validação dos dados da consulta
+		-- Validaï¿½ï¿½o dos dados da consulta
 		IF Pkg_Fun_Validacao_Odontoprev.Valida_Consulta_Update(p_ID_Consulta, p_Data_Consulta, p_ID_Paciente, p_ID_Dentista, UPPER(p_Status)) THEN
 			UPDATE Consulta
 			SET Data_Consulta = COALESCE(p_Data_Consulta, Data_Consulta),
@@ -282,7 +286,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 			DBMS_OUTPUT.PUT_LINE('Consulta atualizada com sucesso.');
 			COMMIT;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para atualização de Consulta.');
+			DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada para atualizaï¿½ï¿½o de Consulta.');
 		END IF;
 	EXCEPTION
 		WHEN OTHERS THEN
@@ -312,7 +316,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
     
     -- Historico de Consulta
     
-    -- Procedure para Inserir Histórico de Consulta
+    -- Procedure para Inserir Histï¿½rico de Consulta
     PROCEDURE Insert_Historico_Consulta(
 		p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE,
 		p_Data_Atendimento Historico_Consulta.Data_Atendimento%TYPE,
@@ -320,23 +324,23 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 		p_Observacoes Historico_Consulta.Observacoes%TYPE DEFAULT NULL
 	) IS
 	BEGIN
-		-- Validar dados da inserção
+		-- Validar dados da inserï¿½ï¿½o
 		IF Pkg_Fun_Validacao_Odontoprev.Valida_Historico_Consulta_Insert(p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
 			INSERT INTO Historico_Consulta (ID_Historico, ID_Consulta, Data_Atendimento, Motivo_Consulta, Observacoes)
 			VALUES (seq_historico.NEXTVAL, p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta, p_Observacoes);
 			
-			DBMS_OUTPUT.PUT_LINE('Histórico de consulta inserido com sucesso.');
+			DBMS_OUTPUT.PUT_LINE('Histï¿½rico de consulta inserido com sucesso.');
 			COMMIT;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para inserção de histórico de consulta.');
+			DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada para inserï¿½ï¿½o de histï¿½rico de consulta.');
 		END IF;
 	EXCEPTION
 		WHEN OTHERS THEN
-			DBMS_OUTPUT.PUT_LINE('Erro ao inserir histórico de consulta: ' || SQLERRM);
+			DBMS_OUTPUT.PUT_LINE('Erro ao inserir histï¿½rico de consulta: ' || SQLERRM);
 			ROLLBACK;
 	END Insert_Historico_Consulta;
     
-    -- Procedure para Atualizar Histórico de Consulta
+    -- Procedure para Atualizar Histï¿½rico de Consulta
     PROCEDURE Update_Historico_Consulta(
 		p_ID_Historico Historico_Consulta.ID_Historico%TYPE,
 		p_ID_Consulta Historico_Consulta.ID_Consulta%TYPE DEFAULT NULL,
@@ -345,7 +349,7 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 		p_Observacoes Historico_Consulta.Observacoes%TYPE DEFAULT NULL
 	) IS
 	BEGIN
-		-- Validar dados da atualização
+		-- Validar dados da atualizaï¿½ï¿½o
 		IF Pkg_Fun_Validacao_Odontoprev.Valida_Historico_Consulta_Update(p_ID_Historico, p_ID_Consulta, p_Data_Atendimento, p_Motivo_Consulta) THEN
 			UPDATE Historico_Consulta
 			SET 
@@ -355,18 +359,18 @@ CREATE OR REPLACE PACKAGE BODY Pkg_Procedures_CRUD_Odontoprev AS
 				Observacoes = COALESCE(p_Observacoes, Observacoes)
 			WHERE ID_Historico = p_ID_Historico;
 
-			DBMS_OUTPUT.PUT_LINE('Histórico de consulta atualizado com sucesso.');
+			DBMS_OUTPUT.PUT_LINE('Histï¿½rico de consulta atualizado com sucesso.');
 			COMMIT;
 		ELSE
-			DBMS_OUTPUT.PUT_LINE('Erro na validação dos dados de entrada para atualização de histórico de consulta.');
+			DBMS_OUTPUT.PUT_LINE('Erro na validaï¿½ï¿½o dos dados de entrada para atualizaï¿½ï¿½o de histï¿½rico de consulta.');
 		END IF;
 	EXCEPTION
 		WHEN OTHERS THEN
-			DBMS_OUTPUT.PUT_LINE('Erro ao atualizar histórico de consulta: ' || SQLERRM);
+			DBMS_OUTPUT.PUT_LINE('Erro ao atualizar histï¿½rico de consulta: ' || SQLERRM);
 			ROLLBACK;
 	END Update_Historico_Consulta;
     
-    -- Procedure para Deletar Histórico de Consulta
+    -- Procedure para Deletar Histï¿½rico de Consulta
     PROCEDURE Delete_Historico_Consulta(
 		p_ID_Historico Historico_Consulta.ID_Historico%TYPE
 	) IS

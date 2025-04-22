@@ -9,7 +9,7 @@ DECLARE
     v_operacao VARCHAR2(10);
     v_id_registro NUMBER;
 BEGIN
-    -- Determina o tipo de operação realizada (INSERT, UPDATE ou DELETE)
+    -- Determina o tipo de operaï¿½ï¿½o realizada (INSERT, UPDATE ou DELETE)
     IF INSERTING THEN
         v_id_registro := :NEW.ID_Paciente;
         v_operacao := 'INSERT';
@@ -17,6 +17,7 @@ BEGIN
                          ', Nome: ' || :NEW.Nome ||
                          ', Data_Nascimento: ' || TO_CHAR(:NEW.Data_Nascimento, 'YYYY-MM-DD') ||
                          ', CPF: ' || :NEW.CPF ||
+                         ', CEP: ' || :NEW.CEP ||
                          ', Endereco: ' || :NEW.Endereco ||
                          ', Telefone: ' || :NEW.Telefone ||
                          ', Carteirinha: ' || :NEW.Carteirinha;
@@ -27,6 +28,7 @@ BEGIN
                            ', Nome: ' || :OLD.Nome ||
                            ', Data_Nascimento: ' || TO_CHAR(:OLD.Data_Nascimento, 'YYYY-MM-DD') ||
                            ', CPF: ' || :OLD.CPF ||
+                           ', CEP: ' || :OLD.CEP ||
                            ', Endereco: ' || :OLD.Endereco ||
                            ', Telefone: ' || :OLD.Telefone ||
                            ', Carteirinha: ' || :OLD.Carteirinha;
@@ -36,6 +38,7 @@ BEGIN
                          ', Nome: ' || :NEW.Nome ||
                          ', Data_Nascimento: ' || TO_CHAR(:NEW.Data_Nascimento, 'YYYY-MM-DD') ||
                          ', CPF: ' || :NEW.CPF ||
+                         ', CEP: ' || :NEW.CEP ||
                          ', Endereco: ' || :NEW.Endereco ||
                          ', Telefone: ' || :NEW.Telefone ||
                          ', Carteirinha: ' || :NEW.Carteirinha;
@@ -46,6 +49,7 @@ BEGIN
                            ', Nome: ' || :OLD.Nome ||
                            ', Data_Nascimento: ' || TO_CHAR(:OLD.Data_Nascimento, 'YYYY-MM-DD') ||
                            ', CPF: ' || :OLD.CPF ||
+                           ', CEP: ' || :OLD.CEP ||
                            ', Endereco: ' || :OLD.Endereco ||
                            ', Telefone: ' || :OLD.Telefone ||
                            ', Carteirinha: ' || :OLD.Carteirinha;
@@ -68,7 +72,7 @@ DECLARE
     v_operacao VARCHAR2(10);
     v_id_registro NUMBER;
 BEGIN
-    -- Determina o tipo de operação realizada (INSERT, UPDATE ou DELETE)
+    -- Determina o tipo de operaï¿½ï¿½o realizada (INSERT, UPDATE ou DELETE)
     IF INSERTING THEN
         v_id_registro := :NEW.ID_Dentista;
         v_operacao := 'INSERT';
@@ -119,7 +123,7 @@ DECLARE
     v_operacao VARCHAR2(10);
     v_id_registro NUMBER;
 BEGIN
-    -- Determina o tipo de operação realizada (INSERT, UPDATE ou DELETE)
+    -- Determina o tipo de operaï¿½ï¿½o realizada (INSERT, UPDATE ou DELETE)
     IF INSERTING THEN
         v_id_registro := :NEW.ID_Consulta;
         v_operacao := 'INSERT';
@@ -159,7 +163,7 @@ BEGIN
 END;
 /
 
--- Trigger auditoria Histórico Consulta
+-- Trigger auditoria Histï¿½rico Consulta
 CREATE OR REPLACE TRIGGER trg_auditoria_historico
     AFTER INSERT OR UPDATE OR DELETE
     ON Historico_Consulta
@@ -170,7 +174,7 @@ DECLARE
     v_operacao VARCHAR2(10);
     v_id_registro NUMBER;
 BEGIN
-    -- Determina o tipo de operação realizada (INSERT, UPDATE ou DELETE)
+    -- Determina o tipo de operaï¿½ï¿½o realizada (INSERT, UPDATE ou DELETE)
     IF INSERTING THEN
         v_id_registro := :NEW.ID_Historico;
         v_operacao := 'INSERT';
